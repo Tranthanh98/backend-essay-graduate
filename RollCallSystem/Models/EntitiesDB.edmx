@@ -1,0 +1,709 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RollCallSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="FaceTrainedStudent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="link_image" Type="varchar(max)" />
+          <Property Name="mssv" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Khoa">
+          <Key>
+            <PropertyRef Name="ma_khoa" />
+          </Key>
+          <Property Name="ma_khoa" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ten_khoa" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MonHoc">
+          <Key>
+            <PropertyRef Name="ma_mon" />
+          </Key>
+          <Property Name="ma_mon" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ten_mon" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="RollCallStudent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="mssv" Type="int" />
+          <Property Name="lich_giang_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ScheduleTeach">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date_teach" Type="date" />
+          <Property Name="ma_mon" Type="int" />
+          <Property Name="teacher_id" Type="int" />
+          <Property Name="phong_hoc" Type="varchar" MaxLength="10" />
+          <Property Name="time_teach" Type="time" Precision="7" />
+          <Property Name="status_id" Type="int" />
+          <Property Name="buoi" Type="int" />
+        </EntityType>
+        <EntityType Name="Status">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name_status" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="StudentInformation">
+          <Key>
+            <PropertyRef Name="mssv" />
+          </Key>
+          <Property Name="mssv" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name_student" Type="nvarchar" MaxLength="100" />
+          <Property Name="user_name" Type="varchar" MaxLength="50" />
+          <Property Name="password" Type="varchar" MaxLength="50" />
+          <Property Name="token" Type="varchar(max)" />
+          <Property Name="age" Type="int" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+          <Property Name="number_phone" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="address" Type="nvarchar(max)" />
+          <Property Name="ma_khoa" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StudentMH">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="mssv" Type="int" Nullable="false" />
+          <Property Name="ma_mon" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TeacherInformation">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="100" />
+          <Property Name="user_name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="token" Type="varchar(max)" />
+          <Property Name="age" Type="int" />
+          <Property Name="number_phone" Type="varchar" MaxLength="10" />
+          <Property Name="address" Type="nvarchar(max)" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+          <Property Name="ma_khoa" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_FaceTrainedStudent_StudentInformation">
+          <End Role="StudentInformation" Type="Self.StudentInformation" Multiplicity="1" />
+          <End Role="FaceTrainedStudent" Type="Self.FaceTrainedStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="FaceTrainedStudent">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RollCallStudent_ScheduleTeach">
+          <End Role="ScheduleTeach" Type="Self.ScheduleTeach" Multiplicity="1" />
+          <End Role="RollCallStudent" Type="Self.RollCallStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScheduleTeach">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RollCallStudent">
+              <PropertyRef Name="lich_giang_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RollCallStudent_StudentInformation">
+          <End Role="StudentInformation" Type="Self.StudentInformation" Multiplicity="0..1" />
+          <End Role="RollCallStudent" Type="Self.RollCallStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="RollCallStudent">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_MonHoc">
+          <End Role="MonHoc" Type="Self.MonHoc" Multiplicity="0..1" />
+          <End Role="ScheduleTeach" Type="Self.ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MonHoc">
+              <PropertyRef Name="ma_mon" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="ma_mon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_Status">
+          <End Role="Status" Type="Self.Status" Multiplicity="0..1" />
+          <End Role="ScheduleTeach" Type="Self.ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Status">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="status_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_TeacherInformation">
+          <End Role="TeacherInformation" Type="Self.TeacherInformation" Multiplicity="0..1" />
+          <End Role="ScheduleTeach" Type="Self.ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeacherInformation">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="teacher_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentInformation_Khoa">
+          <End Role="Khoa" Type="Self.Khoa" Multiplicity="1" />
+          <End Role="StudentInformation" Type="Self.StudentInformation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="ma_khoa" />
+            </Principal>
+            <Dependent Role="StudentInformation">
+              <PropertyRef Name="ma_khoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentMH_MonHoc">
+          <End Role="MonHoc" Type="Self.MonHoc" Multiplicity="1" />
+          <End Role="StudentMH" Type="Self.StudentMH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MonHoc">
+              <PropertyRef Name="ma_mon" />
+            </Principal>
+            <Dependent Role="StudentMH">
+              <PropertyRef Name="ma_mon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentMH_StudentInformation">
+          <End Role="StudentInformation" Type="Self.StudentInformation" Multiplicity="1" />
+          <End Role="StudentMH" Type="Self.StudentMH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="StudentMH">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TeacherInformation_Khoa">
+          <End Role="Khoa" Type="Self.Khoa" Multiplicity="1" />
+          <End Role="TeacherInformation" Type="Self.TeacherInformation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="ma_khoa" />
+            </Principal>
+            <Dependent Role="TeacherInformation">
+              <PropertyRef Name="ma_khoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RollCallSystemModelStoreContainer">
+          <EntitySet Name="FaceTrainedStudent" EntityType="Self.FaceTrainedStudent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Khoa" EntityType="Self.Khoa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MonHoc" EntityType="Self.MonHoc" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RollCallStudent" EntityType="Self.RollCallStudent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ScheduleTeach" EntityType="Self.ScheduleTeach" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Status" EntityType="Self.Status" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StudentInformation" EntityType="Self.StudentInformation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StudentMH" EntityType="Self.StudentMH" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TeacherInformation" EntityType="Self.TeacherInformation" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_FaceTrainedStudent_StudentInformation" Association="Self.FK_FaceTrainedStudent_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformation" />
+            <End Role="FaceTrainedStudent" EntitySet="FaceTrainedStudent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RollCallStudent_ScheduleTeach" Association="Self.FK_RollCallStudent_ScheduleTeach">
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeach" />
+            <End Role="RollCallStudent" EntitySet="RollCallStudent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RollCallStudent_StudentInformation" Association="Self.FK_RollCallStudent_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformation" />
+            <End Role="RollCallStudent" EntitySet="RollCallStudent" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_MonHoc" Association="Self.FK_ScheduleTeach_MonHoc">
+            <End Role="MonHoc" EntitySet="MonHoc" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeach" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_Status" Association="Self.FK_ScheduleTeach_Status">
+            <End Role="Status" EntitySet="Status" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeach" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_TeacherInformation" Association="Self.FK_ScheduleTeach_TeacherInformation">
+            <End Role="TeacherInformation" EntitySet="TeacherInformation" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeach" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentInformation_Khoa" Association="Self.FK_StudentInformation_Khoa">
+            <End Role="Khoa" EntitySet="Khoa" />
+            <End Role="StudentInformation" EntitySet="StudentInformation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentMH_MonHoc" Association="Self.FK_StudentMH_MonHoc">
+            <End Role="MonHoc" EntitySet="MonHoc" />
+            <End Role="StudentMH" EntitySet="StudentMH" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentMH_StudentInformation" Association="Self.FK_StudentMH_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformation" />
+            <End Role="StudentMH" EntitySet="StudentMH" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TeacherInformation_Khoa" Association="Self.FK_TeacherInformation_Khoa">
+            <End Role="Khoa" EntitySet="Khoa" />
+            <End Role="TeacherInformation" EntitySet="TeacherInformation" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RollCallSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="EntitiesDB" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="FaceTrainedStudents" EntityType="RollCallSystemModel.FaceTrainedStudent" />
+          <EntitySet Name="Khoas" EntityType="RollCallSystemModel.Khoa" />
+          <EntitySet Name="MonHocs" EntityType="RollCallSystemModel.MonHoc" />
+          <EntitySet Name="RollCallStudents" EntityType="RollCallSystemModel.RollCallStudent" />
+          <EntitySet Name="ScheduleTeaches" EntityType="RollCallSystemModel.ScheduleTeach" />
+          <EntitySet Name="Status" EntityType="RollCallSystemModel.Status" />
+          <EntitySet Name="StudentInformations" EntityType="RollCallSystemModel.StudentInformation" />
+          <EntitySet Name="StudentMHs" EntityType="RollCallSystemModel.StudentMH" />
+          <EntitySet Name="sysdiagrams" EntityType="RollCallSystemModel.sysdiagram" />
+          <EntitySet Name="TeacherInformations" EntityType="RollCallSystemModel.TeacherInformation" />
+          <AssociationSet Name="FK_FaceTrainedStudent_StudentInformation" Association="RollCallSystemModel.FK_FaceTrainedStudent_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformations" />
+            <End Role="FaceTrainedStudent" EntitySet="FaceTrainedStudents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentInformation_Khoa" Association="RollCallSystemModel.FK_StudentInformation_Khoa">
+            <End Role="Khoa" EntitySet="Khoas" />
+            <End Role="StudentInformation" EntitySet="StudentInformations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TeacherInformation_Khoa" Association="RollCallSystemModel.FK_TeacherInformation_Khoa">
+            <End Role="Khoa" EntitySet="Khoas" />
+            <End Role="TeacherInformation" EntitySet="TeacherInformations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_MonHoc" Association="RollCallSystemModel.FK_ScheduleTeach_MonHoc">
+            <End Role="MonHoc" EntitySet="MonHocs" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentMH_MonHoc" Association="RollCallSystemModel.FK_StudentMH_MonHoc">
+            <End Role="MonHoc" EntitySet="MonHocs" />
+            <End Role="StudentMH" EntitySet="StudentMHs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RollCallStudent_ScheduleTeach" Association="RollCallSystemModel.FK_RollCallStudent_ScheduleTeach">
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeaches" />
+            <End Role="RollCallStudent" EntitySet="RollCallStudents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RollCallStudent_StudentInformation" Association="RollCallSystemModel.FK_RollCallStudent_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformations" />
+            <End Role="RollCallStudent" EntitySet="RollCallStudents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_Status" Association="RollCallSystemModel.FK_ScheduleTeach_Status">
+            <End Role="Status" EntitySet="Status" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ScheduleTeach_TeacherInformation" Association="RollCallSystemModel.FK_ScheduleTeach_TeacherInformation">
+            <End Role="TeacherInformation" EntitySet="TeacherInformations" />
+            <End Role="ScheduleTeach" EntitySet="ScheduleTeaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StudentMH_StudentInformation" Association="RollCallSystemModel.FK_StudentMH_StudentInformation">
+            <End Role="StudentInformation" EntitySet="StudentInformations" />
+            <End Role="StudentMH" EntitySet="StudentMHs" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="FaceTrainedStudent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="link_image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="mssv" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="StudentInformation" Relationship="RollCallSystemModel.FK_FaceTrainedStudent_StudentInformation" FromRole="FaceTrainedStudent" ToRole="StudentInformation" />
+        </EntityType>
+        <EntityType Name="Khoa">
+          <Key>
+            <PropertyRef Name="ma_khoa" />
+          </Key>
+          <Property Name="ma_khoa" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ten_khoa" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="StudentInformations" Relationship="RollCallSystemModel.FK_StudentInformation_Khoa" FromRole="Khoa" ToRole="StudentInformation" />
+          <NavigationProperty Name="TeacherInformations" Relationship="RollCallSystemModel.FK_TeacherInformation_Khoa" FromRole="Khoa" ToRole="TeacherInformation" />
+        </EntityType>
+        <EntityType Name="MonHoc">
+          <Key>
+            <PropertyRef Name="ma_mon" />
+          </Key>
+          <Property Name="ma_mon" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ten_mon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ScheduleTeaches" Relationship="RollCallSystemModel.FK_ScheduleTeach_MonHoc" FromRole="MonHoc" ToRole="ScheduleTeach" />
+          <NavigationProperty Name="StudentMHs" Relationship="RollCallSystemModel.FK_StudentMH_MonHoc" FromRole="MonHoc" ToRole="StudentMH" />
+        </EntityType>
+        <EntityType Name="RollCallStudent">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="mssv" Type="Int32" />
+          <Property Name="lich_giang_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="ScheduleTeach" Relationship="RollCallSystemModel.FK_RollCallStudent_ScheduleTeach" FromRole="RollCallStudent" ToRole="ScheduleTeach" />
+          <NavigationProperty Name="StudentInformation" Relationship="RollCallSystemModel.FK_RollCallStudent_StudentInformation" FromRole="RollCallStudent" ToRole="StudentInformation" />
+        </EntityType>
+        <EntityType Name="ScheduleTeach">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date_teach" Type="DateTime" Precision="0" />
+          <Property Name="ma_mon" Type="Int32" />
+          <Property Name="teacher_id" Type="Int32" />
+          <Property Name="phong_hoc" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="time_teach" Type="Time" Precision="7" />
+          <Property Name="status_id" Type="Int32" />
+          <Property Name="buoi" Type="Int32" />
+          <NavigationProperty Name="MonHoc" Relationship="RollCallSystemModel.FK_ScheduleTeach_MonHoc" FromRole="ScheduleTeach" ToRole="MonHoc" />
+          <NavigationProperty Name="RollCallStudents" Relationship="RollCallSystemModel.FK_RollCallStudent_ScheduleTeach" FromRole="ScheduleTeach" ToRole="RollCallStudent" />
+          <NavigationProperty Name="Status" Relationship="RollCallSystemModel.FK_ScheduleTeach_Status" FromRole="ScheduleTeach" ToRole="Status" />
+          <NavigationProperty Name="TeacherInformation" Relationship="RollCallSystemModel.FK_ScheduleTeach_TeacherInformation" FromRole="ScheduleTeach" ToRole="TeacherInformation" />
+        </EntityType>
+        <EntityType Name="Status">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name_status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ScheduleTeaches" Relationship="RollCallSystemModel.FK_ScheduleTeach_Status" FromRole="Status" ToRole="ScheduleTeach" />
+        </EntityType>
+        <EntityType Name="StudentInformation">
+          <Key>
+            <PropertyRef Name="mssv" />
+          </Key>
+          <Property Name="mssv" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name_student" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="user_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="age" Type="Int32" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="number_phone" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ma_khoa" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="FaceTrainedStudents" Relationship="RollCallSystemModel.FK_FaceTrainedStudent_StudentInformation" FromRole="StudentInformation" ToRole="FaceTrainedStudent" />
+          <NavigationProperty Name="Khoa" Relationship="RollCallSystemModel.FK_StudentInformation_Khoa" FromRole="StudentInformation" ToRole="Khoa" />
+          <NavigationProperty Name="RollCallStudents" Relationship="RollCallSystemModel.FK_RollCallStudent_StudentInformation" FromRole="StudentInformation" ToRole="RollCallStudent" />
+          <NavigationProperty Name="StudentMHs" Relationship="RollCallSystemModel.FK_StudentMH_StudentInformation" FromRole="StudentInformation" ToRole="StudentMH" />
+        </EntityType>
+        <EntityType Name="StudentMH">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="mssv" Type="Int32" Nullable="false" />
+          <Property Name="ma_mon" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MonHoc" Relationship="RollCallSystemModel.FK_StudentMH_MonHoc" FromRole="StudentMH" ToRole="MonHoc" />
+          <NavigationProperty Name="StudentInformation" Relationship="RollCallSystemModel.FK_StudentMH_StudentInformation" FromRole="StudentMH" ToRole="StudentInformation" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TeacherInformation">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="user_name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="token" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="age" Type="Int32" />
+          <Property Name="number_phone" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ma_khoa" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Khoa" Relationship="RollCallSystemModel.FK_TeacherInformation_Khoa" FromRole="TeacherInformation" ToRole="Khoa" />
+          <NavigationProperty Name="ScheduleTeaches" Relationship="RollCallSystemModel.FK_ScheduleTeach_TeacherInformation" FromRole="TeacherInformation" ToRole="ScheduleTeach" />
+        </EntityType>
+        <Association Name="FK_FaceTrainedStudent_StudentInformation">
+          <End Type="RollCallSystemModel.StudentInformation" Role="StudentInformation" Multiplicity="1" />
+          <End Type="RollCallSystemModel.FaceTrainedStudent" Role="FaceTrainedStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="FaceTrainedStudent">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentInformation_Khoa">
+          <End Type="RollCallSystemModel.Khoa" Role="Khoa" Multiplicity="1" />
+          <End Type="RollCallSystemModel.StudentInformation" Role="StudentInformation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="ma_khoa" />
+            </Principal>
+            <Dependent Role="StudentInformation">
+              <PropertyRef Name="ma_khoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TeacherInformation_Khoa">
+          <End Type="RollCallSystemModel.Khoa" Role="Khoa" Multiplicity="1" />
+          <End Type="RollCallSystemModel.TeacherInformation" Role="TeacherInformation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="ma_khoa" />
+            </Principal>
+            <Dependent Role="TeacherInformation">
+              <PropertyRef Name="ma_khoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_MonHoc">
+          <End Type="RollCallSystemModel.MonHoc" Role="MonHoc" Multiplicity="0..1" />
+          <End Type="RollCallSystemModel.ScheduleTeach" Role="ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MonHoc">
+              <PropertyRef Name="ma_mon" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="ma_mon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentMH_MonHoc">
+          <End Type="RollCallSystemModel.MonHoc" Role="MonHoc" Multiplicity="1" />
+          <End Type="RollCallSystemModel.StudentMH" Role="StudentMH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MonHoc">
+              <PropertyRef Name="ma_mon" />
+            </Principal>
+            <Dependent Role="StudentMH">
+              <PropertyRef Name="ma_mon" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RollCallStudent_ScheduleTeach">
+          <End Type="RollCallSystemModel.ScheduleTeach" Role="ScheduleTeach" Multiplicity="1" />
+          <End Type="RollCallSystemModel.RollCallStudent" Role="RollCallStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScheduleTeach">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RollCallStudent">
+              <PropertyRef Name="lich_giang_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RollCallStudent_StudentInformation">
+          <End Type="RollCallSystemModel.StudentInformation" Role="StudentInformation" Multiplicity="0..1" />
+          <End Type="RollCallSystemModel.RollCallStudent" Role="RollCallStudent" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="RollCallStudent">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_Status">
+          <End Type="RollCallSystemModel.Status" Role="Status" Multiplicity="0..1" />
+          <End Type="RollCallSystemModel.ScheduleTeach" Role="ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Status">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="status_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ScheduleTeach_TeacherInformation">
+          <End Type="RollCallSystemModel.TeacherInformation" Role="TeacherInformation" Multiplicity="0..1" />
+          <End Type="RollCallSystemModel.ScheduleTeach" Role="ScheduleTeach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeacherInformation">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ScheduleTeach">
+              <PropertyRef Name="teacher_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StudentMH_StudentInformation">
+          <End Type="RollCallSystemModel.StudentInformation" Role="StudentInformation" Multiplicity="1" />
+          <End Type="RollCallSystemModel.StudentMH" Role="StudentMH" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StudentInformation">
+              <PropertyRef Name="mssv" />
+            </Principal>
+            <Dependent Role="StudentMH">
+              <PropertyRef Name="mssv" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RollCallSystemModelStoreContainer" CdmEntityContainer="EntitiesDB">
+          <EntitySetMapping Name="FaceTrainedStudents">
+            <EntityTypeMapping TypeName="RollCallSystemModel.FaceTrainedStudent">
+              <MappingFragment StoreEntitySet="FaceTrainedStudent">
+                <ScalarProperty Name="mssv" ColumnName="mssv" />
+                <ScalarProperty Name="link_image" ColumnName="link_image" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Khoas">
+            <EntityTypeMapping TypeName="RollCallSystemModel.Khoa">
+              <MappingFragment StoreEntitySet="Khoa">
+                <ScalarProperty Name="ten_khoa" ColumnName="ten_khoa" />
+                <ScalarProperty Name="ma_khoa" ColumnName="ma_khoa" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MonHocs">
+            <EntityTypeMapping TypeName="RollCallSystemModel.MonHoc">
+              <MappingFragment StoreEntitySet="MonHoc">
+                <ScalarProperty Name="ten_mon" ColumnName="ten_mon" />
+                <ScalarProperty Name="ma_mon" ColumnName="ma_mon" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RollCallStudents">
+            <EntityTypeMapping TypeName="RollCallSystemModel.RollCallStudent">
+              <MappingFragment StoreEntitySet="RollCallStudent">
+                <ScalarProperty Name="lich_giang_id" ColumnName="lich_giang_id" />
+                <ScalarProperty Name="mssv" ColumnName="mssv" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleTeaches">
+            <EntityTypeMapping TypeName="RollCallSystemModel.ScheduleTeach">
+              <MappingFragment StoreEntitySet="ScheduleTeach">
+                <ScalarProperty Name="buoi" ColumnName="buoi" />
+                <ScalarProperty Name="status_id" ColumnName="status_id" />
+                <ScalarProperty Name="time_teach" ColumnName="time_teach" />
+                <ScalarProperty Name="phong_hoc" ColumnName="phong_hoc" />
+                <ScalarProperty Name="teacher_id" ColumnName="teacher_id" />
+                <ScalarProperty Name="ma_mon" ColumnName="ma_mon" />
+                <ScalarProperty Name="date_teach" ColumnName="date_teach" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Status">
+            <EntityTypeMapping TypeName="RollCallSystemModel.Status">
+              <MappingFragment StoreEntitySet="Status">
+                <ScalarProperty Name="name_status" ColumnName="name_status" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentInformations">
+            <EntityTypeMapping TypeName="RollCallSystemModel.StudentInformation">
+              <MappingFragment StoreEntitySet="StudentInformation">
+                <ScalarProperty Name="ma_khoa" ColumnName="ma_khoa" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="number_phone" ColumnName="number_phone" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="age" ColumnName="age" />
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="name_student" ColumnName="name_student" />
+                <ScalarProperty Name="mssv" ColumnName="mssv" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StudentMHs">
+            <EntityTypeMapping TypeName="RollCallSystemModel.StudentMH">
+              <MappingFragment StoreEntitySet="StudentMH">
+                <ScalarProperty Name="ma_mon" ColumnName="ma_mon" />
+                <ScalarProperty Name="mssv" ColumnName="mssv" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="RollCallSystemModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TeacherInformations">
+            <EntityTypeMapping TypeName="RollCallSystemModel.TeacherInformation">
+              <MappingFragment StoreEntitySet="TeacherInformation">
+                <ScalarProperty Name="ma_khoa" ColumnName="ma_khoa" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="number_phone" ColumnName="number_phone" />
+                <ScalarProperty Name="age" ColumnName="age" />
+                <ScalarProperty Name="token" ColumnName="token" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
