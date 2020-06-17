@@ -213,9 +213,13 @@
     <Compile Include="Models\ModelRequest\ModelSearchClass.cs" />
     <Compile Include="Models\ModelRequest\ModelTrainingFace.cs" />
     <Compile Include="Models\ModelRequest\ModelUpdateClass.cs" />
+    <Compile Include="Models\ModelResponse\AckAllClass.cs" />
+    <Compile Include="Models\ModelResponse\AckDashboard.cs" />
+    <Compile Include="Models\ModelResponse\AckGetAllStudent.cs" />
     <Compile Include="Models\ModelResponse\AckGetClass.cs" />
     <Compile Include="Models\ModelResponse\AckGetStudentByClass.cs" />
     <Compile Include="Models\ModelResponse\AckLogin.cs" />
+    <Compile Include="Models\ModelResponse\AckModelStudentInf.cs" />
     <Compile Include="Models\ModelResponse\AcknowledgementResponse.cs" />
     <Compile Include="Models\ModelResponse\AckLoginResponse.cs" />
     <Compile Include="Models\ModelResponse\AckResponseMonHoc.cs" />
@@ -239,9 +243,6 @@
       <DependentUpon>EntitiesDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\StudentMH.cs">
-      <DependentUpon>EntitiesDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>EntitiesDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TeacherInformation.cs">

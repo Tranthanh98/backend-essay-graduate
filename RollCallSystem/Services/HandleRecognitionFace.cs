@@ -296,5 +296,13 @@ namespace RollCallSystem.Services
             //modelRecognition.imageReturn = imageReturn;
             return modelRecognition;
         }
+        public string ConvertPathImageToBase64(string pathImage)
+        {
+            //Image<Gray, byte> i = new Image<Gray, byte>(pathImage);
+            Bitmap bmp = new Bitmap(pathImage);
+            Image<Bgr, byte> imageBgr = new Image<Bgr, byte>(bmp);
+            string imgAfterConverting = this.ConvertImageBitmapToBase64(imageBgr.ToBitmap());
+            return "data:image/jpg;base64,"+ imgAfterConverting;
+        }
     }
 }

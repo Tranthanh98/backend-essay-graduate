@@ -5,16 +5,15 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="4739758df20840988bc659d23010007b" Name="Diagram1" ZoomLevel="21">
-        <EntityTypeShape EntityType="RollCallSystemModel.FaceTrainedStudent" Width="1.5" PointX="5.25" PointY="9.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Khoa" Width="1.5" PointX="0.75" PointY="6.125" />
-        <EntityTypeShape EntityType="RollCallSystemModel.MonHoc" Width="1.5" PointX="6" PointY="12.25" />
-        <EntityTypeShape EntityType="RollCallSystemModel.RollCallStudent" Width="1.5" PointX="5.25" PointY="1" />
-        <EntityTypeShape EntityType="RollCallSystemModel.ScheduleTeach" Width="1.5" PointX="8.25" PointY="7.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Status" Width="1.5" PointX="6" PointY="14.75" />
-        <EntityTypeShape EntityType="RollCallSystemModel.StudentInformation" Width="1.5" PointX="3" PointY="3.125" />
-        <EntityTypeShape EntityType="RollCallSystemModel.StudentMH" Width="1.5" PointX="5.25" PointY="4" />
-        <EntityTypeShape EntityType="RollCallSystemModel.sysdiagram" Width="1.5" PointX="7.75" PointY="0.75" />
-        <EntityTypeShape EntityType="RollCallSystemModel.TeacherInformation" Width="1.5" PointX="3" PointY="7.625" />
+        <EntityTypeShape EntityType="RollCallSystemModel.FaceTrainedStudent" Width="1.5" PointX="5.25" PointY="12.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Khoa" Width="1.5" PointX="0.75" PointY="7.5" />
+        <EntityTypeShape EntityType="RollCallSystemModel.MonHoc" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="RollCallSystemModel.RollCallStudent" Width="1.5" PointX="7.5" PointY="7.375" />
+        <EntityTypeShape EntityType="RollCallSystemModel.ScheduleTeach" Width="1.5" PointX="5.25" PointY="4.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Status" Width="1.5" PointX="3" PointY="13.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.StudentInformation" Width="1.5" PointX="3" PointY="8.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.StudentMH" Width="1.5" PointX="5.25" PointY="9.375" />
+        <EntityTypeShape EntityType="RollCallSystemModel.TeacherInformation" Width="1.5" PointX="3" PointY="4.125" />
         <AssociationConnector Association="RollCallSystemModel.FK_FaceTrainedStudent_StudentInformation" />
         <AssociationConnector Association="RollCallSystemModel.FK_StudentInformation_Khoa" />
         <AssociationConnector Association="RollCallSystemModel.FK_TeacherInformation_Khoa" />

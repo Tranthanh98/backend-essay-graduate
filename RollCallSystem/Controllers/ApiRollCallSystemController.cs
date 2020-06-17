@@ -361,6 +361,84 @@ namespace RollCallSystem.Controllers
             ack.isSuccess = true;
             return ack;
         }
+        [HttpPost]
+        [Route("get-all-class-of-teacher")]
+        public AcknowledgementResponse<List<AckAllClass>> GetAllClassOfTeacher(GetClassByDay getClassByDay)
+        {
+            var ack = new AcknowledgementResponse<List<AckAllClass>>();
+            ack.isSuccess = false;
+            ack.Data = new List<AckAllClass>();
+
+            var data = this.serviceContext.GetAllClassTeacher(getClassByDay.teacherId);
+            if(data.Count == 0)
+            {
+                ack.AddErrorMessage("không có lớp nào");
+                return ack;
+            }
+            ack.Data = data;
+            ack.isSuccess = true;
+            return ack;
+        }
+        [HttpPost]
+        [Route("get-all-student-subject")]
+        public AcknowledgementResponse<List<AckGetAllStudent>> GetAllStudentSubject(ModelGetStudent modelGetStudent)
+        {
+            var ack = new AcknowledgementResponse<List<AckGetAllStudent>>();
+            ack.isSuccess = false;
+            ack.Data = new List<AckGetAllStudent>();
+
+            var query = this.serviceContext.GetAllStudentOfClass(modelGetStudent);
+            if(query.Count == 0)
+            {
+                ack.AddErrorMessage("Không có sinh viên nào học lớp này!");
+            }
+            else
+            {
+                ack.Data = query;
+                ack.isSuccess = true;
+            }
+            return ack;
+        }
+        [HttpPost]
+        [Route("get-information-student")]
+        public AcknowledgementResponse<AckModelStudentInf> GetInformationStudent(ModelRollCall model)
+        {
+            var ack = new AcknowledgementResponse<AckModelStudentInf>();
+            ack.isSuccess = false;
+
+            var query = db.StudentInformations.Where(x => x.mssv == model.Mssv).FirstOrDefault();
+            if(query == null)
+            {
+                ack.AddErrorMessage("Mã số sinh viên không tồn tại");
+                return ack;
+            }
+            AckModelStudentInf a = new AckModelStudentInf();
+            a.mssv = query.mssv;
+            a.nameStudent = query.name_student;
+            a.email = query.email;
+            a.course = query.course;
+            a.imageTrained = new List<string>();
+            HandleRecognitionFace handle = new HandleRecognitionFace();
+            foreach(var item in query.FaceTrainedStudents)
+            {
+                string pathImage = handle.ConvertPathImageToBase64(item.link_image);
+                a.imageTrained.Add(pathImage);
+            }
+            a.ListRollCall = new List<RollCall>();
+            foreach(var item in query.RollCallStudents)
+            {
+                RollCall rc = new RollCall();
+                rc.lichGiangId = item.lich_giang_id;
+                rc.ngayDay = item.ScheduleTeach.date_teach;
+                rc.phongHoc = item.ScheduleTeach.phong_hoc;
+                rc.tuanThu = item.ScheduleTeach.buoi;
+                a.ListRollCall.Add(rc);
+            }
+            ack.Data = a;
+            ack.isSuccess = true;
+
+            return ack;
+        }
     }
    
 }

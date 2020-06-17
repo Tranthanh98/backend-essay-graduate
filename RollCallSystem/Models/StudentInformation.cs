@@ -32,6 +32,9 @@ namespace RollCallSystem.Models
         public Nullable<decimal> number_phone { get; set; }
         public string address { get; set; }
         public int ma_khoa { get; set; }
+        public Nullable<System.DateTime> birthday { get; set; }
+        public string home_town { get; set; }
+        public Nullable<int> course { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FaceTrainedStudent> FaceTrainedStudents { get; set; }

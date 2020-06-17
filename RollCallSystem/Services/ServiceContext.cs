@@ -167,5 +167,105 @@ namespace RollCallSystem.Services
             }
             return data;
         }
+        public List<AckAllClass> GetAllClassTeacher (int teacherId)
+        {
+            var data = new List<AckAllClass>();
+            var query = (from mh in db.MonHocs
+                         join tmp in (
+                                    from lgd in db.ScheduleTeaches
+                                    where lgd.teacher_id == teacherId && lgd.status_id == 3
+                                    group lgd by new
+                                    {
+                                        lgd.ma_mon,
+                                        lgd.teacher_id
+                                    } into t
+                                    select new
+                                    {
+                                        t.Key.ma_mon,
+                                        t.Key.teacher_id,
+                                        buoiDaDay = t.Count()
+                                    }
+                         ) on mh.ma_mon equals tmp.ma_mon
+                         join stmh in db.StudentMHs on tmp.ma_mon equals stmh.ma_mon
+                         where tmp.teacher_id == teacherId
+                         group mh by new
+                         {
+                             mh.ma_mon,
+                             mh.ten_mon,
+                             tmp.buoiDaDay
+                         } into temp
+                         select new
+                         {
+                             temp.Key.ma_mon,
+                             temp.Key.ten_mon,
+                             temp.Key.buoiDaDay,
+                             totalStudent = temp.Count()
+                         }).ToList();
+            foreach (var item in query)
+            {
+                AckAllClass a = new AckAllClass();
+                a.maMon = item.ma_mon;
+                a.tenMon = item.ten_mon;
+                a.soBuoiDaDay = item.buoiDaDay;
+                a.totalStudent = item.totalStudent;
+                data.Add(a);
+            }
+            return data;
+        }
+        public List<AckGetAllStudent> GetAllStudentOfClass(ModelGetStudent modelGetStudent)
+        {
+            var data = new List<AckGetAllStudent>();
+
+            var query = (from mh in db.MonHocs
+                         join lgd in (from t in db.ScheduleTeaches
+                                      where t.ma_mon == modelGetStudent.MaMon && t.teacher_id == modelGetStudent.teacherId
+                                      group t by new
+                                      {
+                                          t.ma_mon,
+                                          t.teacher_id
+                                      } into g
+                                      select new { 
+                                      g.Key.ma_mon,
+                                      g.Key.teacher_id}) on mh.ma_mon equals lgd.ma_mon
+                         join stmh in db.StudentMHs on mh.ma_mon equals stmh.ma_mon
+                         join std in db.StudentInformations on stmh.mssv equals std.mssv
+                         join f in db.FaceTrainedStudents on std.mssv equals f.mssv into temp
+                         from mapping in temp.DefaultIfEmpty()
+                         join k in db.Khoas on std.ma_khoa equals k.ma_khoa
+                         where mh.ma_mon == modelGetStudent.MaMon && lgd.teacher_id == modelGetStudent.teacherId
+                         group mapping by new
+                         {
+                             mh.ma_mon,
+                             mh.ten_mon,
+                             std.mssv,
+                             std.name_student,
+                             k.ten_khoa,
+                             k.ma_khoa
+                         } into g
+                         select new
+                         {
+                             g.Key.ma_mon,
+                             g.Key.ten_mon,
+                             g.Key.mssv,
+                             g.Key.ten_khoa,
+                             g.Key.name_student,
+                             g.Key.ma_khoa,
+                             totalFaceTrained = g.Count(t => t.mssv !=null)
+                         }
+                         ).ToList();
+            foreach(var item in query)
+            {
+                AckGetAllStudent a = new AckGetAllStudent();
+                a.maMon = item.ma_mon;
+                a.tenMon = item.ten_mon;
+                a.mssv = item.mssv;
+                a.tenKhoa = item.ten_khoa;
+                a.name_student = item.name_student;
+                a.ma_khoa = item.ma_khoa;
+                a.totalFaceTrained = item.totalFaceTrained;
+                data.Add(a);
+            }
+            return data;
+        }
     }
 }

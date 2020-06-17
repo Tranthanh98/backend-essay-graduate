@@ -33,7 +33,6 @@ namespace RollCallSystem.Models
         public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<StudentInformation> StudentInformations { get; set; }
         public virtual DbSet<StudentMH> StudentMHs { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<TeacherInformation> TeacherInformations { get; set; }
     }
 }
