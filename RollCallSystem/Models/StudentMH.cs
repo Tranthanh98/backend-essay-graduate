@@ -17,6 +17,7 @@ namespace RollCallSystem.Models
         public int id { get; set; }
         public int mssv { get; set; }
         public int ma_mon { get; set; }
+        public Nullable<bool> is_suspended { get; set; }
     
         public virtual MonHoc MonHoc { get; set; }
         public virtual StudentInformation StudentInformation { get; set; }

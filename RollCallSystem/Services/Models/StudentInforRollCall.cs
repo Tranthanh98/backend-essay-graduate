@@ -10,6 +10,7 @@ namespace RollCallSystem.Services.Models
     {
         public int maMon { get; set; }
         public string tenMon { get; set; }
+        public bool? isSuspended { get; set; }
         public int countRollCall { get; set; }
     }
 }

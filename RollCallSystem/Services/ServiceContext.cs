@@ -40,6 +40,7 @@ namespace RollCallSystem.Services
                          where mh.ma_mon == modelGetStudent.MaMon && lgd.date_teach == modelGetStudent.date && lgd.teacher_id == modelGetStudent.teacherId
                          group new { mapping, mapRollCall } by new
                          {
+                             smh.is_suspended,
                              mh.ma_mon,
                              mh.ten_mon,
                              std.mssv,
@@ -59,7 +60,8 @@ namespace RollCallSystem.Services
                              NgayDay = g.Key.date_teach,
                              GioDay = g.Key.time_teach,
                              totalFaceTrained = g.Count(t => (int?)t.mapping.mssv != null),
-                             rollCalled = (int?)g.Key.rollCallId
+                             rollCalled = (int?)g.Key.rollCallId,
+                             g.Key.is_suspended
                          }).ToList();
             foreach (var item in query)
             {
@@ -73,6 +75,7 @@ namespace RollCallSystem.Services
                 st.GioDay = item.GioDay;
                 st.totalFaceTrained = item.totalFaceTrained;
                 st.isRollCalled = item.rollCalled != null ? 1 : 0;
+                st.isSuppended = item.is_suspended;
                 data.Add(st);
             }
             return data;
@@ -144,7 +147,8 @@ namespace RollCallSystem.Services
                              mh.ma_mon,
                              mh.ten_mon,
                              std.mssv,
-                             std.name_student
+                             std.name_student,
+                             stmh.is_suspended
                          } into g
                          select new
                          {
@@ -152,6 +156,7 @@ namespace RollCallSystem.Services
                              g.Key.name_student,
                              g.Key.ma_mon,
                              g.Key.ten_mon,
+                             g.Key.is_suspended,
                              countRollCall = g.Count(t => t.mssv != null)
                          }).ToList();
             foreach (var item in query)
@@ -162,6 +167,7 @@ namespace RollCallSystem.Services
                 st.maMon = item.ma_mon;
                 st.tenMon = item.ten_mon;
                 st.countRollCall = item.countRollCall;
+                st.isSuspended = item.is_suspended;
                 data.Add(st);
                
             }
@@ -240,7 +246,8 @@ namespace RollCallSystem.Services
                              std.mssv,
                              std.name_student,
                              k.ten_khoa,
-                             k.ma_khoa
+                             k.ma_khoa,
+                             stmh.is_suspended,
                          } into g
                          select new
                          {
@@ -250,7 +257,8 @@ namespace RollCallSystem.Services
                              g.Key.ten_khoa,
                              g.Key.name_student,
                              g.Key.ma_khoa,
-                             totalFaceTrained = g.Count(t => t.mssv !=null)
+                             totalFaceTrained = g.Count(t => t.mssv !=null),
+                             g.Key.is_suspended
                          }
                          ).ToList();
             foreach(var item in query)
@@ -263,6 +271,7 @@ namespace RollCallSystem.Services
                 a.name_student = item.name_student;
                 a.ma_khoa = item.ma_khoa;
                 a.totalFaceTrained = item.totalFaceTrained;
+                a.isSuspended = item.is_suspended;
                 data.Add(a);
             }
             return data;

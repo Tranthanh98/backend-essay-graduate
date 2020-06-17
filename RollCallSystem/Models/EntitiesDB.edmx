@@ -80,6 +80,7 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="mssv" Type="int" Nullable="false" />
           <Property Name="ma_mon" Type="int" Nullable="false" />
+          <Property Name="is_suspended" Type="bit" />
         </EntityType>
         <EntityType Name="TeacherInformation">
           <Key>
@@ -415,6 +416,7 @@
           <Property Name="ma_mon" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MonHoc" Relationship="RollCallSystemModel.FK_StudentMH_MonHoc" FromRole="StudentMH" ToRole="MonHoc" />
           <NavigationProperty Name="StudentInformation" Relationship="RollCallSystemModel.FK_StudentMH_StudentInformation" FromRole="StudentMH" ToRole="StudentInformation" />
+          <Property Name="is_suspended" Type="Boolean" />
         </EntityType>
         <EntityType Name="TeacherInformation">
           <Key>
@@ -637,6 +639,7 @@
           <EntitySetMapping Name="StudentMHs">
             <EntityTypeMapping TypeName="RollCallSystemModel.StudentMH">
               <MappingFragment StoreEntitySet="StudentMH">
+                <ScalarProperty Name="is_suspended" ColumnName="is_suspended" />
                 <ScalarProperty Name="ma_mon" ColumnName="ma_mon" />
                 <ScalarProperty Name="mssv" ColumnName="mssv" />
                 <ScalarProperty Name="id" ColumnName="id" />

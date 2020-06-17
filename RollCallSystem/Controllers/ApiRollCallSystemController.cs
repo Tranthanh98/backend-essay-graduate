@@ -340,6 +340,7 @@ namespace RollCallSystem.Controllers
                 ack.AddErrorMessage("error!");
                 return ack;
             }
+            //TODO :  check sinh viên bị đình chỉ
             ack.Data = data;
             ack.isSuccess = true;
             return ack;
@@ -352,11 +353,7 @@ namespace RollCallSystem.Controllers
             ack.isSuccess = false;
             ack.Data = new List<StudentInforRollCall>();
             var data = this.serviceContext.GetInfStudentRollCall(modelGetStudent.MaMon, modelGetStudent.teacherId);
-            if(data.Count() == 0)
-            {
-                ack.AddErrorMessage("error!");
-                return ack;
-            }
+            
             ack.Data = data;
             ack.isSuccess = true;
             return ack;
@@ -425,13 +422,22 @@ namespace RollCallSystem.Controllers
                 a.imageTrained.Add(pathImage);
             }
             a.ListRollCall = new List<RollCall>();
-            foreach(var item in query.RollCallStudents)
+            var listDayRollCall = (from rc in query.RollCallStudents
+                                   join lgd in db.ScheduleTeaches on rc.lich_giang_id equals lgd.id
+                                   where lgd.ma_mon == model.MaMon && lgd.teacher_id == model.teacherId
+                                   select new { 
+                                    rc.lich_giang_id,
+                                    lgd.date_teach,
+                                    lgd.phong_hoc,
+                                    lgd.buoi
+                                   }).ToList();
+            foreach(var item in listDayRollCall)
             {
                 RollCall rc = new RollCall();
                 rc.lichGiangId = item.lich_giang_id;
-                rc.ngayDay = item.ScheduleTeach.date_teach;
-                rc.phongHoc = item.ScheduleTeach.phong_hoc;
-                rc.tuanThu = item.ScheduleTeach.buoi;
+                rc.ngayDay = item.date_teach;
+                rc.phongHoc = item.phong_hoc;
+                rc.tuanThu = item.buoi;
                 a.ListRollCall.Add(rc);
             }
             ack.Data = a;

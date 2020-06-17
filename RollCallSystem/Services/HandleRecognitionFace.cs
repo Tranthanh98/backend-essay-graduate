@@ -128,7 +128,7 @@ namespace RollCallSystem.Services
                 foreach (Rectangle f in rectangles)
                 {
                     grayImage.ROI = f;
-
+                    image.ROI = f;
                     break;
                 }
                 string fileFace = root + fileName + ".bmp";
@@ -138,6 +138,7 @@ namespace RollCallSystem.Services
 
                 flipFImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFaceFlip);
                 grayImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFace);
+                image.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFace + "bgr.bmp");
                 this.checkSuccess = true;
                 return fileFace + "," + fileFaceFlip;
             }
@@ -250,7 +251,7 @@ namespace RollCallSystem.Services
                         LineType.EightConnected//border
                         );
                     string imageReturn = ConvertImageBitmapToBase64(image.ToBitmap());
-                    modelRecognition.checkSuccess = false;
+                    modelRecognition.checkSuccess = true;
                     modelRecognition.imageReturn = imageReturn;
                     //return modelRecognition;
                 }
@@ -298,11 +299,18 @@ namespace RollCallSystem.Services
         }
         public string ConvertPathImageToBase64(string pathImage)
         {
-            //Image<Gray, byte> i = new Image<Gray, byte>(pathImage);
-            Bitmap bmp = new Bitmap(pathImage);
-            Image<Bgr, byte> imageBgr = new Image<Bgr, byte>(bmp);
-            string imgAfterConverting = this.ConvertImageBitmapToBase64(imageBgr.ToBitmap());
-            return "data:image/jpg;base64,"+ imgAfterConverting;
+            Image<Gray, byte> i = new Image<Gray, byte>(pathImage);
+            Image<Bgr, byte> bgrImage = i.Convert<Bgr, byte>();
+            //Bitmap bmp = new Bitmap(pathImage);
+            //Image<Bgr, byte> imageBgr = new Image<Bgr, byte>(bmp);
+            string imgAfterConverting = this.ConvertImageBitmapToBase64(bgrImage.ToBitmap());
+            if(headerBase64 == "")
+            {
+                return "data:image/jpg;base64,"+ imgAfterConverting;
+            }
+            return imgAfterConverting;
+
+
         }
     }
 }

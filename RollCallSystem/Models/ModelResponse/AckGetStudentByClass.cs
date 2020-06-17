@@ -16,5 +16,6 @@ namespace RollCallSystem.Models.ModelResponse
         public TimeSpan? GioDay { get; set; }
         public int? totalFaceTrained { get; set; }
         public int? isRollCalled { get; set; }
+        public bool? isSuppended { get; set; }
     }
 }
