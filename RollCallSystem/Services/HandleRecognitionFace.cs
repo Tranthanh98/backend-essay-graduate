@@ -138,7 +138,7 @@ namespace RollCallSystem.Services
 
                 flipFImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFaceFlip);
                 grayImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFace);
-                image.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFace + "bgr.bmp");
+                //image.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic).ToBitmap().Save(fileFace + "bgr.bmp");
                 this.checkSuccess = true;
                 return fileFace + "," + fileFaceFlip;
             }

@@ -225,6 +225,7 @@
     <Compile Include="Models\ModelResponse\AckResponseMonHoc.cs" />
     <Compile Include="Models\ModelResponse\AckRollCallStudent.cs" />
     <Compile Include="Models\ModelResponse\AckSearchEngine.cs" />
+    <Compile Include="Models\ModelResponse\AckTeacherInf.cs" />
     <Compile Include="Models\ModelResponse\BaseResponse.cs" />
     <Compile Include="Models\ModelRequest\ModelLogin.cs" />
     <Compile Include="Models\MonHoc.cs">

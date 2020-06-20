@@ -12,6 +12,7 @@ namespace RollCallSystem.Models.ModelResponse
         public string email { get; set; }
         public int? course { get; set; }
         public List<string> imageTrained { get; set; }
+        public bool? isSuspended { get; set; }
         public List<RollCall> ListRollCall { get; set; }
     }
     public class RollCall

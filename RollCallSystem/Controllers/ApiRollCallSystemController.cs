@@ -235,7 +235,8 @@ namespace RollCallSystem.Controllers
                 var listStudentOfClass = db.RollCallStudents.Where(x => x.lich_giang_id == queryGetIdTeach.id).ToList();
 
                 var listMssvClone = new List<int>(listMssv);
-
+                
+                //vòng for này để loại các sv đã đc điểm danh
                 foreach(var mssv in listMssv)
                 {
                     foreach(var item in listStudentOfClass)
@@ -246,7 +247,8 @@ namespace RollCallSystem.Controllers
                         }
                     }
                 }
-                foreach(var mssv in listMssvClone)
+                //ds listMssvClone này là ds các sinh viên chưa điểm danh
+                foreach (var mssv in listMssvClone)
                 {
                     RollCallStudent rc = new RollCallStudent();
                     rc.mssv = mssv;
@@ -332,6 +334,32 @@ namespace RollCallSystem.Controllers
                 return ack;
             }
             scheduleTeach.status_id = modelUpdateClass.status;
+
+            db.SaveChanges();
+
+            var getCacBuoi = db.ScheduleTeaches.Where(x => x.ma_mon == scheduleTeach.ma_mon 
+                                                        && x.teacher_id == scheduleTeach.teacher_id 
+                                                        && x.status_id == 3).Select(x => x.id).ToList();
+
+
+
+            int? tuanHoc = scheduleTeach.buoi;
+            var buoiHocCuaSinhVien = (from rc in db.RollCallStudents
+                                      where getCacBuoi.Contains(rc.lich_giang_id)
+                                      group rc by new { rc.mssv } into g
+                                      select new
+                                      {
+                                          g.Key.mssv,
+                                          totalBuoiDaDiemDanh = g.Count()
+                                      }).ToList();
+            foreach(var b in buoiHocCuaSinhVien)
+            {
+                if(tuanHoc - b.totalBuoiDaDiemDanh > 3)
+                {
+                    var sv = db.StudentMHs.Where(x => x.mssv == b.mssv && x.ma_mon == scheduleTeach.ma_mon).FirstOrDefault();
+                    sv.is_suspended = true;
+                }
+            }
             db.SaveChanges();
 
             var data = this.serviceContext.GetClass(modelUpdateClass);
@@ -340,7 +368,7 @@ namespace RollCallSystem.Controllers
                 ack.AddErrorMessage("error!");
                 return ack;
             }
-            //TODO :  check sinh viên bị đình chỉ
+            
             ack.Data = data;
             ack.isSuccess = true;
             return ack;
@@ -440,10 +468,58 @@ namespace RollCallSystem.Controllers
                 rc.tuanThu = item.buoi;
                 a.ListRollCall.Add(rc);
             }
+            var checkSuspend = db.StudentMHs.Where(x => x.ma_mon == model.MaMon && x.mssv == model.Mssv).Select(i => i.is_suspended).FirstOrDefault();
+            a.isSuspended = checkSuspend;
             ack.Data = a;
             ack.isSuccess = true;
 
             return ack;
+        }
+        [HttpPost]
+        [Route("close-class-have-not-closed")]
+        public AcknowledgementResponse<string> CloseClass(GetClassByDay model)
+        {
+            var ack = new AcknowledgementResponse<string>();
+            ack.isSuccess = false;
+
+            var query = db.ScheduleTeaches.Where(x => x.date_teach < model.date).ToList();
+
+            foreach(var cls in query)
+            {
+                cls.status_id = 3;
+            }
+            db.SaveChanges();
+            ack.isSuccess = true;
+            return ack;
+        }
+        [HttpPost]
+        [Route("get-inf-teacher")]
+        public AcknowledgementResponse<AckTeacherInf> GetTeacher(ModelGetStudent model)
+        {
+            var ack = new AcknowledgementResponse<AckTeacherInf>();
+            ack.isSuccess = false;
+
+            ack.Data = new AckTeacherInf();
+            var data = (from t in db.TeacherInformations
+                        join k in db.Khoas on t.ma_khoa equals k.ma_khoa
+                        where t.id == model.teacherId
+                        select new {
+                            t,
+                            k.ten_khoa
+                        }).FirstOrDefault();
+
+            ack.Data.address = data.t.address;
+            ack.Data.birthday = data.t.age;
+            ack.Data.email = data.t.email;
+            ack.Data.khoa = data.ten_khoa;
+            ack.Data.name = data.t.name;
+            ack.Data.numberPhone = data.t.number_phone;
+            ack.Data.userName = data.t.user_name;
+            ack.Data.password = data.t.password;
+
+            ack.isSuccess = true;
+            return ack;
+
         }
     }
    
