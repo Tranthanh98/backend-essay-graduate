@@ -250,11 +250,15 @@ namespace RollCallSystem.Controllers
                 //ds listMssvClone này là ds các sinh viên chưa điểm danh
                 foreach (var mssv in listMssvClone)
                 {
-                    RollCallStudent rc = new RollCallStudent();
-                    rc.mssv = mssv;
-                    rc.lich_giang_id = queryGetIdTeach.id;
-                    db.RollCallStudents.Add(rc);
-                    db.SaveChanges();
+                    var checkSuspend = db.StudentMHs.Where(x => x.mssv == mssv && x.ma_mon == modelRollCall.MaMon).Select(i => i.is_suspended).FirstOrDefault();
+                    if (!(bool)checkSuspend)
+                    {
+                        RollCallStudent rc = new RollCallStudent();
+                        rc.mssv = mssv;
+                        rc.lich_giang_id = queryGetIdTeach.id;
+                        db.RollCallStudents.Add(rc);
+                        db.SaveChanges();
+                    }
                 }
                 //query get student information roll called
                 ack.isSuccess = true;
@@ -292,11 +296,15 @@ namespace RollCallSystem.Controllers
             }
             else
             {
-
-                RollCallStudent rc = new RollCallStudent();
-                rc.mssv = checkRollCall.mssv;
-                rc.lich_giang_id = queryGetIdTeach.id;
-                db.RollCallStudents.Add(rc);
+                var checkSuspend = db.StudentMHs.Where(x => x.mssv == checkRollCall.mssv && x.ma_mon == checkRollCall.MaMon).Select(s => s.is_suspended).FirstOrDefault();
+                if (!(bool)checkSuspend)
+                {
+                    RollCallStudent rc = new RollCallStudent();
+                    rc.mssv = checkRollCall.mssv;
+                    rc.lich_giang_id = queryGetIdTeach.id;
+                    db.RollCallStudents.Add(rc);
+                }
+                
             }
             try
             {
@@ -337,31 +345,34 @@ namespace RollCallSystem.Controllers
 
             db.SaveChanges();
 
-            var getCacBuoi = db.ScheduleTeaches.Where(x => x.ma_mon == scheduleTeach.ma_mon 
-                                                        && x.teacher_id == scheduleTeach.teacher_id 
+            if(modelUpdateClass.status == 3)
+            {
+                var getCacBuoi = db.ScheduleTeaches.Where(x => x.ma_mon == scheduleTeach.ma_mon
+                                                        && x.teacher_id == scheduleTeach.teacher_id
                                                         && x.status_id == 3).Select(x => x.id).ToList();
 
 
-
-            int? tuanHoc = scheduleTeach.buoi;
-            var buoiHocCuaSinhVien = (from rc in db.RollCallStudents
-                                      where getCacBuoi.Contains(rc.lich_giang_id)
-                                      group rc by new { rc.mssv } into g
-                                      select new
-                                      {
-                                          g.Key.mssv,
-                                          totalBuoiDaDiemDanh = g.Count()
-                                      }).ToList();
-            foreach(var b in buoiHocCuaSinhVien)
-            {
-                if(tuanHoc - b.totalBuoiDaDiemDanh > 3)
+                int? tuanHoc = scheduleTeach.buoi;
+                //var buoiHocCuaSinhVien = (from rc in db.RollCallStudents
+                //                          where getCacBuoi.Contains(rc.lich_giang_id)
+                //                          group rc by new { rc.mssv } into g
+                //                          select new
+                //                          {
+                //                              g.Key.mssv,
+                //                              totalBuoiDaDiemDanh = g.Count()
+                //                          }).ToList();
+                var buoiHocCuaSinhVien = this.serviceContext.GetInfStudentRollCall((int)scheduleTeach.ma_mon, (int)scheduleTeach.teacher_id);
+                foreach (var b in buoiHocCuaSinhVien)
                 {
-                    var sv = db.StudentMHs.Where(x => x.mssv == b.mssv && x.ma_mon == scheduleTeach.ma_mon).FirstOrDefault();
-                    sv.is_suspended = true;
+                    if (tuanHoc - b.countRollCall >= 3)
+                    {
+                        var sv = db.StudentMHs.Where(x => x.mssv == b.mssv && x.ma_mon == scheduleTeach.ma_mon).FirstOrDefault();
+                        sv.is_suspended = true;
+                    }
                 }
-            }
-            db.SaveChanges();
+                db.SaveChanges();
 
+            }
             var data = this.serviceContext.GetClass(modelUpdateClass);
             if(data.Count == 0)
             {
@@ -468,6 +479,8 @@ namespace RollCallSystem.Controllers
                 rc.tuanThu = item.buoi;
                 a.ListRollCall.Add(rc);
             }
+            var countTotalBuoiHoc = db.ScheduleTeaches.Where(x => x.status_id == 3 && x.ma_mon == model.MaMon).Count();
+            a.totalBuoiHoc = countTotalBuoiHoc;
             var checkSuspend = db.StudentMHs.Where(x => x.ma_mon == model.MaMon && x.mssv == model.Mssv).Select(i => i.is_suspended).FirstOrDefault();
             a.isSuspended = checkSuspend;
             ack.Data = a;
