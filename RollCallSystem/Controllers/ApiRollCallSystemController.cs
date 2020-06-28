@@ -19,6 +19,12 @@ namespace RollCallSystem.Controllers
     [RoutePrefix("api/ApiRollCallSystem")]
     public class ApiRollCallSystemController : ApiController
     {
+        static public int count = 0;
+        public ApiRollCallSystemController()
+        {
+            count++;
+            Console.WriteLine(count);
+        }
         private ServiceContext serviceContext = ServiceContext.Instance();
         private MD5 md5hash = MD5.Create();
         EntitiesDB db = new EntitiesDB();
@@ -495,7 +501,7 @@ namespace RollCallSystem.Controllers
             var ack = new AcknowledgementResponse<string>();
             ack.isSuccess = false;
 
-            var query = db.ScheduleTeaches.Where(x => x.date_teach < model.date).ToList();
+            var query = db.ScheduleTeaches.Where(x => x.date_teach < model.date && x.status_id == 2).ToList();
 
             foreach(var cls in query)
             {
@@ -530,6 +536,29 @@ namespace RollCallSystem.Controllers
             ack.Data.userName = data.t.user_name;
             ack.Data.password = data.t.password;
 
+            ack.isSuccess = true;
+            return ack;
+
+        }
+        [HttpPost]
+        [Route("get-now-class-opening")]
+        public AcknowledgementResponse<NowClass> GetNowClassOpening(ModelGetStudent modelGetStudent)
+        {
+            var ack = new AcknowledgementResponse<NowClass>();
+            ack.isSuccess = false;
+            ack.Data = new NowClass();
+
+            var dataMonHoc = this.serviceContext.GetNowClass(modelGetStudent.teacherId);
+            if(dataMonHoc == null)
+            {
+                ack.AddErrorMessage("không có lớp học đang mở!");
+                
+                return ack;
+            }
+
+            ack.Data.nowClass = dataMonHoc;
+            var dataStudnent = this.serviceContext.GetInfStudentRollCall((int)dataMonHoc.ma_mon, modelGetStudent.teacherId);
+            ack.Data.listStudent = dataStudnent;
             ack.isSuccess = true;
             return ack;
 

@@ -16,6 +16,12 @@ namespace RollCallSystem.Services
 {
     public class HandleRecognitionFace
     {
+
+        //static HandleRecognitionFace()
+        //{
+        //    lBPHFaceRecognizer = new LBPHFaceRecognizer();
+        //    lBPHFaceRecognizer.Train();
+        //}
         public bool checkSuccess = false;
 
         Image<Bgr, byte> image;
@@ -26,7 +32,7 @@ namespace RollCallSystem.Services
         CascadeClassifier detectFace = new CascadeClassifier("D:\\LuanVanTotNghiep\\RollCallSystem\\RollCallSystem\\App_Data\\FaceRecognition\\haarcascade_frontalface_default.xml");
         //CascadeClassifier detectEyes = new CascadeClassifier("D:\\LuanVanTotNghiep\\RollUpStudent\\RollUpStudent\\App_Data\\FaceRecogintion\\haarcascade_eye.xml");
         EigenFaceRecognizer eigenFaceRecognizer;
-        LBPHFaceRecognizer lBPHFaceRecognizer;
+        static LBPHFaceRecognizer lBPHFaceRecognizer;
         FaceRecognizer fishserFaceRecognizer;
 
         public static string headerBase64 = "";
@@ -171,11 +177,11 @@ namespace RollCallSystem.Services
             //this code for recognition face by EigenFaceRecognizer
             eigenFaceRecognizer = new EigenFaceRecognizer(eigenTrainedImageCounter, 4200);
             eigenFaceRecognizer.Train(listImageTrained.ToArray(), eigenIntlabels.ToArray());
-
+            //var time = DateTime.Now;
             //this code for recognition face by LBPHFaceRecognizer
             lBPHFaceRecognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 95);
             lBPHFaceRecognizer.Train(listImageTrained.ToArray(), eigenIntlabels.ToArray());
-
+            //var time2 = DateTime.Now;
             //this code for recognition face by FishserFaceRecognizer
             fishserFaceRecognizer = new FisherFaceRecognizer(0, 4000);
             fishserFaceRecognizer.Train(listImageTrained.ToArray(), eigenIntlabels.ToArray());
@@ -191,6 +197,9 @@ namespace RollCallSystem.Services
             if(rectangles.Count() == 0)
             {
                 modelRecognition.messageError = "Không phát hiện được khuôn mặt!";
+                string imageReturn = ConvertImageBitmapToBase64(image.ToBitmap());
+                //modelRecognition.checkSuccess = false;
+                modelRecognition.imageReturn = imageReturn;
                 return modelRecognition;
             }
 
@@ -226,8 +235,10 @@ namespace RollCallSystem.Services
 
                 //recognition by EigenFace
                 FaceRecognizer.PredictionResult result = eigenFaceRecognizer.Predict(grayImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic));
+                var time = DateTime.Now;
                 //recognition by LBHP
                 FaceRecognizer.PredictionResult lbhpRecognition = lBPHFaceRecognizer.Predict(grayImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic));
+                var time2 = DateTime.Now;
                 //recognition by Fisher
                 FaceRecognizer.PredictionResult fisherResult = fishserFaceRecognizer.Predict(grayImage.Resize(100, 100, Emgu.CV.CvEnum.Inter.Cubic));
 

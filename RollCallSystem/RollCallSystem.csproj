@@ -213,6 +213,7 @@
     <Compile Include="Models\ModelRequest\ModelSearchClass.cs" />
     <Compile Include="Models\ModelRequest\ModelTrainingFace.cs" />
     <Compile Include="Models\ModelRequest\ModelUpdateClass.cs" />
+    <Compile Include="Models\ModelRequest\NowClass.cs" />
     <Compile Include="Models\ModelResponse\AckAllClass.cs" />
     <Compile Include="Models\ModelResponse\AckDashboard.cs" />
     <Compile Include="Models\ModelResponse\AckGetAllStudent.cs" />

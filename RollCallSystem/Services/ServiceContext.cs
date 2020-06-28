@@ -276,5 +276,57 @@ namespace RollCallSystem.Services
             }
             return data;
         }
+        public AckGetClass GetNowClass(int teacherId)
+        {
+            var item = (from lgd in db.ScheduleTeaches
+                         join mh in db.MonHocs on lgd.ma_mon equals mh.ma_mon
+                         join stmh in db.StudentMHs on mh.ma_mon equals stmh.ma_mon
+                         where
+                             lgd.status_id == 2
+                             &&
+                             lgd.teacher_id == teacherId
+                         group stmh by new
+                         {
+                             lgd.id,
+                             lgd.date_teach,
+                             lgd.time_teach,
+                             lgd.ma_mon,
+                             lgd.teacher_id,
+                             lgd.phong_hoc,
+                             lgd.status_id,
+                             mh.ten_mon,
+                             lgd.buoi
+                         } into g
+                         select new
+                         {
+                             g.Key.id,
+                             g.Key.date_teach,
+                             g.Key.time_teach,
+                             g.Key.ma_mon,
+                             g.Key.teacher_id,
+                             g.Key.phong_hoc,
+                             g.Key.ten_mon,
+                             g.Key.status_id,
+                             g.Key.buoi,
+                             totalSV = g.Count()
+                         }).FirstOrDefault();
+            if(item == null)
+            {
+                return null;
+            }
+                AckGetClass a = new AckGetClass();
+                a.id = item.id;
+                a.date = item.date_teach;
+                a.time = item.time_teach;
+                a.ma_mon = item.ma_mon;
+                a.teacher_id = item.teacher_id;
+                a.phong_hoc = item.phong_hoc;
+                a.ten_mon = item.ten_mon;
+                a.totalSV = item.totalSV;
+                a.status = item.status_id;
+                a.buoi = item.buoi;
+            
+            return a;
+        }
     }
 }
