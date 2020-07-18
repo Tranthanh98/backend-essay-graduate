@@ -1,4 +1,5 @@
 /RollCallSystem/bin
-RollCallSystem/obj/Debug/
+/RollCallSystem/obj/Debug/
+/packages
 
 .vs/RollCallSystem/v16/.suo
