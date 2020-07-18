@@ -29,7 +29,7 @@ namespace RollCallSystem.Services
         List<Image<Gray, byte>> listImageTrained = new List<Image<Gray, byte>>();
         List<string> listName = new List<string>();
         //CascadeClassifier detectFace = new CascadeClassifier(System.IO.Path.GetFullPath(@"../App_Data/FaceRecogintion/haarcascade_frontalface_default.xml"));
-        CascadeClassifier detectFace = new CascadeClassifier("D:\\LuanVanTotNghiep\\RollCallSystem\\RollCallSystem\\App_Data\\FaceRecognition\\haarcascade_frontalface_default.xml");
+        CascadeClassifier detectFace = new CascadeClassifier("C:\\Workspace\\Luan van\\backend-essay-graduate\\RollCallSystem\\App_Data\\FaceRecognition\\haarcascade_frontalface_default.xml");
         //CascadeClassifier detectEyes = new CascadeClassifier("D:\\LuanVanTotNghiep\\RollUpStudent\\RollUpStudent\\App_Data\\FaceRecogintion\\haarcascade_eye.xml");
         EigenFaceRecognizer eigenFaceRecognizer;
         static LBPHFaceRecognizer lBPHFaceRecognizer;

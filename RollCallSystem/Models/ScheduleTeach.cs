@@ -12,27 +12,44 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
+     using System.Runtime.Serialization;
+     using Newtonsoft.Json;
+    
+     [DataContract(IsReference =true)]
+     [JsonObject(MemberSerialization.OptOut)]
     public partial class ScheduleTeach
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ScheduleTeach()
         {
-            this.RollCallStudents = new HashSet<RollCallStudent>();
+            this.RollCallStudents = new List<RollCallStudent>();
         }
     
+    	[DataMember]
         public int id { get; set; }
+    	[DataMember]
         public Nullable<System.DateTime> date_teach { get; set; }
+    	[DataMember]
         public Nullable<int> ma_mon { get; set; }
+    	[DataMember]
         public Nullable<int> teacher_id { get; set; }
+    	[DataMember]
         public string phong_hoc { get; set; }
+    	[DataMember]
         public Nullable<System.TimeSpan> time_teach { get; set; }
+    	[DataMember]
         public Nullable<int> status_id { get; set; }
+    	[DataMember]
         public Nullable<int> buoi { get; set; }
     
+    	[DataMember]
         public virtual MonHoc MonHoc { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RollCallStudent> RollCallStudents { get; set; }
+    	[DataMember]
+        public virtual List<RollCallStudent> RollCallStudents { get; set; }
+    	[DataMember]
         public virtual Status Status { get; set; }
+    	[DataMember]
         public virtual TeacherInformation TeacherInformation { get; set; }
     }
 }

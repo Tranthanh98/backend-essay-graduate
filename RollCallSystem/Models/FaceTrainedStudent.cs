@@ -12,12 +12,21 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
+     using System.Runtime.Serialization;
+     using Newtonsoft.Json;
+    
+     [DataContract(IsReference =true)]
+     [JsonObject(MemberSerialization.OptOut)]
     public partial class FaceTrainedStudent
     {
+    	[DataMember]
         public int id { get; set; }
+    	[DataMember]
         public string link_image { get; set; }
+    	[DataMember]
         public int mssv { get; set; }
     
+    	[DataMember]
         public virtual StudentInformation StudentInformation { get; set; }
     }
 }

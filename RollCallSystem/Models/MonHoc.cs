@@ -12,21 +12,30 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
+     using System.Runtime.Serialization;
+     using Newtonsoft.Json;
+    
+     [DataContract(IsReference =true)]
+     [JsonObject(MemberSerialization.OptOut)]
     public partial class MonHoc
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public MonHoc()
         {
-            this.ScheduleTeaches = new HashSet<ScheduleTeach>();
-            this.StudentMHs = new HashSet<StudentMH>();
+            this.ScheduleTeaches = new List<ScheduleTeach>();
+            this.StudentMHs = new List<StudentMH>();
         }
     
+    	[DataMember]
         public int ma_mon { get; set; }
+    	[DataMember]
         public string ten_mon { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ScheduleTeach> ScheduleTeaches { get; set; }
+    	[DataMember]
+        public virtual List<ScheduleTeach> ScheduleTeaches { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentMH> StudentMHs { get; set; }
+    	[DataMember]
+        public virtual List<StudentMH> StudentMHs { get; set; }
     }
 }

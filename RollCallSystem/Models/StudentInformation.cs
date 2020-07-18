@@ -12,36 +12,58 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
+     using System.Runtime.Serialization;
+     using Newtonsoft.Json;
+    
+     [DataContract(IsReference =true)]
+     [JsonObject(MemberSerialization.OptOut)]
     public partial class StudentInformation
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public StudentInformation()
         {
-            this.FaceTrainedStudents = new HashSet<FaceTrainedStudent>();
-            this.RollCallStudents = new HashSet<RollCallStudent>();
-            this.StudentMHs = new HashSet<StudentMH>();
+            this.FaceTrainedStudents = new List<FaceTrainedStudent>();
+            this.RollCallStudents = new List<RollCallStudent>();
+            this.StudentMHs = new List<StudentMH>();
         }
     
+    	[DataMember]
         public int mssv { get; set; }
+    	[DataMember]
         public string name_student { get; set; }
+    	[DataMember]
         public string user_name { get; set; }
+    	[DataMember]
         public string password { get; set; }
+    	[DataMember]
         public string token { get; set; }
+    	[DataMember]
         public Nullable<int> age { get; set; }
+    	[DataMember]
         public string email { get; set; }
+    	[DataMember]
         public Nullable<decimal> number_phone { get; set; }
+    	[DataMember]
         public string address { get; set; }
+    	[DataMember]
         public int ma_khoa { get; set; }
+    	[DataMember]
         public Nullable<System.DateTime> birthday { get; set; }
+    	[DataMember]
         public string home_town { get; set; }
+    	[DataMember]
         public Nullable<int> course { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FaceTrainedStudent> FaceTrainedStudents { get; set; }
+    	[DataMember]
+        public virtual List<FaceTrainedStudent> FaceTrainedStudents { get; set; }
+    	[DataMember]
         public virtual Khoa Khoa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RollCallStudent> RollCallStudents { get; set; }
+    	[DataMember]
+        public virtual List<RollCallStudent> RollCallStudents { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentMH> StudentMHs { get; set; }
+    	[DataMember]
+        public virtual List<StudentMH> StudentMHs { get; set; }
     }
 }

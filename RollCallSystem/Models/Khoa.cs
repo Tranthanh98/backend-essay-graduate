@@ -12,21 +12,30 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
+     using System.Runtime.Serialization;
+     using Newtonsoft.Json;
+    
+     [DataContract(IsReference =true)]
+     [JsonObject(MemberSerialization.OptOut)]
     public partial class Khoa
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Khoa()
         {
-            this.StudentInformations = new HashSet<StudentInformation>();
-            this.TeacherInformations = new HashSet<TeacherInformation>();
+            this.StudentInformations = new List<StudentInformation>();
+            this.TeacherInformations = new List<TeacherInformation>();
         }
     
+    	[DataMember]
         public int ma_khoa { get; set; }
+    	[DataMember]
         public string ten_khoa { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentInformation> StudentInformations { get; set; }
+    	[DataMember]
+        public virtual List<StudentInformation> StudentInformations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TeacherInformation> TeacherInformations { get; set; }
+    	[DataMember]
+        public virtual List<TeacherInformation> TeacherInformations { get; set; }
     }
 }
