@@ -44,15 +44,24 @@ namespace RollCallSystem.Controllers
                 MD5 md5Hash = MD5.Create();
                 string token = MD5Hash.GetMd5Hash(md5Hash, modelLogin.userName + now);
                 result.token = token;
-                db.SaveChanges();
-                AckLogin t = new AckLogin();
-                t.address = result.address;
-                t.user_name = result.user_name;
-                t.token = result.token;
-                t.name = result.name;
-                t.ma_khoa = result.ma_khoa;
-                t.id = result.id;
-                ack.Data = t;
+                try
+                {
+                    db.SaveChanges();
+                    AckLogin t = new AckLogin();
+                    t.address = result.address;
+                    t.user_name = result.user_name;
+                    t.token = result.token;
+                    t.name = result.name;
+                    t.ma_khoa = result.ma_khoa;
+                    t.id = result.id;
+                    ack.Data = t;
+                }
+                catch(Exception ex)
+                {
+                    ack.isSuccess = false;
+                    ack.AddErrorMessage("user name hoặc password không đúng!");
+                }
+               
             }
             else
             {
@@ -459,12 +468,17 @@ namespace RollCallSystem.Controllers
             a.nameStudent = query.name_student;
             a.email = query.email;
             a.course = query.course;
-            a.imageTrained = new List<string>();
+            a.imageTrained = new List<ListImage>();
             HandleRecognitionFace handle = new HandleRecognitionFace();
             foreach(var item in query.FaceTrainedStudents)
             {
-                string pathImage = handle.ConvertPathImageToBase64(item.link_image);
-                a.imageTrained.Add(pathImage);
+                ListImage lsImg = new ListImage()
+                {
+                    id = item.id,
+                    imageString = handle.ConvertPathImageToBase64(item.link_image)
+                };
+                //string pathImage = handle.ConvertPathImageToBase64(item.link_image);
+                a.imageTrained.Add(lsImg);
             }
             a.ListRollCall = new List<RollCall>();
             var listDayRollCall = (from rc in query.RollCallStudents
@@ -562,6 +576,31 @@ namespace RollCallSystem.Controllers
             ack.isSuccess = true;
             return ack;
 
+        }
+        [HttpGet]
+        [Route("delete-image-student")]
+        public AcknowledgementResponse<string> DeleteImageStudent(int id)
+        {
+            var ack = new AcknowledgementResponse<string>();
+            ack.isSuccess = false;
+
+            var query = db.FaceTrainedStudents.Where(x => x.id == id).FirstOrDefault();
+            if(query == null)
+            {
+                ack.AddErrorMessage("image không tồn tại!");
+                return ack;
+            }
+            db.FaceTrainedStudents.Remove(query);
+            try
+            {
+                db.SaveChanges();
+                ack.isSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                ack.AddErrorMessage("error during saving in db!");
+            }
+            return ack;
         }
     }
    

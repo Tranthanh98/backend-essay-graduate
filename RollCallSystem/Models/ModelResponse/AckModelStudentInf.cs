@@ -11,7 +11,7 @@ namespace RollCallSystem.Models.ModelResponse
         public string nameStudent { get; set; }
         public string email { get; set; }
         public int? course { get; set; }
-        public List<string> imageTrained { get; set; }
+        public List<ListImage> imageTrained { get; set; }
         public bool? isSuspended { get; set; }
         public int totalBuoiHoc { get; set; }
         public List<RollCall> ListRollCall { get; set; }
@@ -22,5 +22,10 @@ namespace RollCallSystem.Models.ModelResponse
         public DateTime? ngayDay { get; set; }
         public string phongHoc { get; set; }
         public int? tuanThu { get; set; }
+    }
+    public class ListImage
+    {
+        public int id { get; set; }
+        public string imageString { get; set; }
     }
 }
