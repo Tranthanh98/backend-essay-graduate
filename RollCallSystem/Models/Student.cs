@@ -22,7 +22,7 @@ namespace RollCallSystem.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Student()
         {
-            this.StudentRollCalls = new List<StudentRollCall>();
+            this.RollCalls = new List<RollCall>();
             this.Studyings = new List<Studying>();
             this.TrainingImages = new List<TrainingImage>();
         }
@@ -58,11 +58,11 @@ namespace RollCallSystem.Models
         public virtual Major Major { get; set; }
     	[DataMember]
         public virtual MajorSpecialty MajorSpecialty { get; set; }
-    	[DataMember]
-        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     	[DataMember]
-        public virtual List<StudentRollCall> StudentRollCalls { get; set; }
+        public virtual List<RollCall> RollCalls { get; set; }
+    	[DataMember]
+        public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     	[DataMember]
         public virtual List<Studying> Studyings { get; set; }

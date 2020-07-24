@@ -22,6 +22,7 @@ namespace RollCallSystem.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public FileAttachment()
         {
+            this.RollCalls = new List<RollCall>();
             this.TrainingImages = new List<TrainingImage>();
         }
     
@@ -42,6 +43,9 @@ namespace RollCallSystem.Models
     
     	[DataMember]
         public virtual FileData FileData { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    	[DataMember]
+        public virtual List<RollCall> RollCalls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     	[DataMember]
         public virtual List<TrainingImage> TrainingImages { get; set; }

@@ -27,9 +27,9 @@ namespace RollCallSystem.Controllers.api
             return await RCSService.RecognizeStudent(model);
         }
         [HttpGet]
-        public async Task<ApiResult<List<Studying>>> GetAllSubjectOfStudent(int studentId)
+        public async Task<ApiResult<List<Studying>>> GetAllSubject(int studentId)
         {
-            return await RCSService.GetAllSubjectOfStudent(studentId);
+            return await RCSService.GetAllSubject(studentId);
         }
         [HttpGet]
         public async Task<ApiResult<Student>> GetStudentInfo(int studentId)

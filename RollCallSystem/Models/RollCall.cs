@@ -17,18 +17,26 @@ namespace RollCallSystem.Models
     
      [DataContract(IsReference =true)]
      [JsonObject(MemberSerialization.OptOut)]
-    public partial class RollCallStudent
+    public partial class RollCall
     {
     	[DataMember]
-        public int id { get; set; }
+        public int StudentId { get; set; }
     	[DataMember]
-        public Nullable<int> mssv { get; set; }
+        public int ClassScheduleId { get; set; }
     	[DataMember]
-        public int lich_giang_id { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+    	[DataMember]
+        public int Type { get; set; }
+    	[DataMember]
+        public Nullable<int> ImageId { get; set; }
+    	[DataMember]
+        public bool IsActive { get; set; }
     
     	[DataMember]
-        public virtual ScheduleTeach ScheduleTeach { get; set; }
+        public virtual ClassSchedule ClassSchedule { get; set; }
     	[DataMember]
-        public virtual StudentInformation StudentInformation { get; set; }
+        public virtual FileAttachment FileAttachment { get; set; }
+    	[DataMember]
+        public virtual Student Student { get; set; }
     }
 }

@@ -14,7 +14,18 @@ namespace RollCallSystem.Models
     }
     public enum EUserRole : int
     {
-        TEACHER = 1,
-        STUDENT = 2
+        Teacher = 1,
+        Student = 2
+    }
+    public enum EClassStatus : int
+    {
+        Schedule = 1,
+        Opening = 2,
+        Closed=3,
+    }
+    public enum ERollCallType : int
+    {
+        Auto = 1,
+        Manually = 2,
     }
 }

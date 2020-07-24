@@ -36,11 +36,13 @@ namespace RollCallSystem.Models
     	[DataMember]
         public string Name { get; set; }
     	[DataMember]
-        public Nullable<int> Day { get; set; }
+        public int Day { get; set; }
     	[DataMember]
-        public Nullable<int> StartSession { get; set; }
+        public int StartSession { get; set; }
     	[DataMember]
-        public Nullable<int> QuantityOfSession { get; set; }
+        public int QuantityOfSession { get; set; }
+    	[DataMember]
+        public string Room { get; set; }
     
     	[DataMember]
         public virtual Subject Subject { get; set; }

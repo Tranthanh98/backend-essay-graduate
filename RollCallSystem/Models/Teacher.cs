@@ -41,6 +41,10 @@ namespace RollCallSystem.Models
         public Nullable<int> UserId { get; set; }
     	[DataMember]
         public int Gender { get; set; }
+    	[DataMember]
+        public string Hometown { get; set; }
+    	[DataMember]
+        public System.DateTime Birthday { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     	[DataMember]

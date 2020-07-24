@@ -29,25 +29,16 @@ namespace RollCallSystem.Models
         public virtual DbSet<ClassSchedule> ClassSchedules { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Exercise> Exercises { get; set; }
-        public virtual DbSet<FaceTrainedStudent> FaceTrainedStudents { get; set; }
         public virtual DbSet<Faculty> Faculties { get; set; }
         public virtual DbSet<FileAttachment> FileAttachments { get; set; }
         public virtual DbSet<FileData> FileDatas { get; set; }
-        public virtual DbSet<Khoa> Khoas { get; set; }
         public virtual DbSet<Major> Majors { get; set; }
         public virtual DbSet<MajorSpecialty> MajorSpecialties { get; set; }
-        public virtual DbSet<MonHoc> MonHocs { get; set; }
-        public virtual DbSet<RollCallStudent> RollCallStudents { get; set; }
-        public virtual DbSet<ScheduleTeach> ScheduleTeaches { get; set; }
-        public virtual DbSet<Status> Status { get; set; }
+        public virtual DbSet<RollCall> RollCalls { get; set; }
         public virtual DbSet<Student> Students { get; set; }
-        public virtual DbSet<StudentInformation> StudentInformations { get; set; }
-        public virtual DbSet<StudentMH> StudentMHs { get; set; }
-        public virtual DbSet<StudentRollCall> StudentRollCalls { get; set; }
         public virtual DbSet<Studying> Studyings { get; set; }
         public virtual DbSet<Subject> Subjects { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
-        public virtual DbSet<TeacherInformation> TeacherInformations { get; set; }
         public virtual DbSet<TrainingImage> TrainingImages { get; set; }
         public virtual DbSet<User> Users { get; set; }
     }

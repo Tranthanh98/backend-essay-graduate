@@ -4,60 +4,42 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7c106e617cb841af94fe880014e00cc6" Name="Diagram1">
-        <EntityTypeShape EntityType="RollCallSystemModel.Class" Width="1.5" PointX="5.25" PointY="7.875" />
-        <EntityTypeShape EntityType="RollCallSystemModel.ClassSchedule" Width="1.5" PointX="7.5" PointY="16.875" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Course" Width="1.5" PointX="5.25" PointY="15.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Exercise" Width="1.5" PointX="7.5" PointY="6.375" />
-        <EntityTypeShape EntityType="RollCallSystemModel.FaceTrainedStudent" Width="1.5" PointX="16.25" PointY="7.5" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Faculty" Width="1.5" PointX="0.75" PointY="8.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.FileAttachment" Width="1.5" PointX="7.5" PointY="21" />
-        <EntityTypeShape EntityType="RollCallSystemModel.FileData" Width="1.5" PointX="9.75" PointY="21.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Khoa" Width="1.5" PointX="11.75" PointY="6.75" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Major" Width="1.5" PointX="3" PointY="12.25" />
-        <EntityTypeShape EntityType="RollCallSystemModel.MajorSpecialty" Width="1.5" PointX="5.25" PointY="12.375" />
-        <EntityTypeShape EntityType="RollCallSystemModel.MonHoc" Width="1.5" PointX="14" PointY="0.75" />
-        <EntityTypeShape EntityType="RollCallSystemModel.RollCallStudent" Width="1.5" PointX="16.25" PointY="4.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.ScheduleTeach" Width="1.5" PointX="16.25" PointY="10.5" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Status" Width="1.5" PointX="14" PointY="13.375" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Student" Width="1.5" PointX="7.5" PointY="11" />
-        <EntityTypeShape EntityType="RollCallSystemModel.StudentInformation" Width="1.5" PointX="14" PointY="3.5" />
-        <EntityTypeShape EntityType="RollCallSystemModel.StudentMH" Width="1.5" PointX="16.25" PointY="1.5" />
-        <EntityTypeShape EntityType="RollCallSystemModel.StudentRollCall" Width="1.5" PointX="9.75" PointY="15.25" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Studying" Width="1.5" PointX="9.75" PointY="8.75" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Subject" Width="1.5" PointX="3" PointY="4.625" />
-        <EntityTypeShape EntityType="RollCallSystemModel.Teacher" Width="1.5" PointX="3" PointY="7.875" />
-        <EntityTypeShape EntityType="RollCallSystemModel.TeacherInformation" Width="1.5" PointX="14" PointY="8.5" />
-        <EntityTypeShape EntityType="RollCallSystemModel.TrainingImage" Width="1.5" PointX="9.75" PointY="12.25" />
-        <EntityTypeShape EntityType="RollCallSystemModel.User" Width="1.5" PointX="0.75" PointY="5.375" />
+      <Diagram DiagramId="7c106e617cb841af94fe880014e00cc6" Name="Diagram1" ZoomLevel="82">
+        <EntityTypeShape EntityType="RollCallSystemModel.Class" Width="1.5" PointX="5.25" PointY="7.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.ClassSchedule" Width="1.5" PointX="7.5" PointY="6.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Course" Width="1.5" PointX="5.25" PointY="15.5" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Exercise" Width="1.5" PointX="7.5" PointY="2.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Faculty" Width="1.5" PointX="0.75" PointY="8.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.FileAttachment" Width="1.5" PointX="10.5" PointY="16.75" />
+        <EntityTypeShape EntityType="RollCallSystemModel.FileData" Width="1.5" PointX="12.75" PointY="17.5" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Major" Width="1.5" PointX="3" PointY="12.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.MajorSpecialty" Width="1.5" PointX="5.25" PointY="12.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.RollCall" Width="1.5" PointX="12.75" PointY="11.875" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Student" Width="1.5" PointX="7.5" PointY="10.875" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Studying" Width="1.5" PointX="9.75" PointY="10.375" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Subject" Width="1.5" PointX="3" PointY="4.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.Teacher" Width="1.5" PointX="3" PointY="7.25" />
+        <EntityTypeShape EntityType="RollCallSystemModel.TrainingImage" Width="1.5" PointX="9.75" PointY="13.125" />
+        <EntityTypeShape EntityType="RollCallSystemModel.User" Width="1.5" PointX="0.75" PointY="4.75" />
         <AssociationConnector Association="RollCallSystemModel.FK_Class_Subject" />
         <AssociationConnector Association="RollCallSystemModel.FK_Class_Teacher" />
         <AssociationConnector Association="RollCallSystemModel.FK_ClassSchedule_Class" />
         <AssociationConnector Association="RollCallSystemModel.FK_Exercise_Class" />
         <AssociationConnector Association="RollCallSystemModel.FK_Studying_Class" />
-        <AssociationConnector Association="RollCallSystemModel.FK_StudentRollCall_ClassSchedule" />
+        <AssociationConnector Association="RollCallSystemModel.FK_RollCall_ClassSchedule" />
         <AssociationConnector Association="RollCallSystemModel.FK_Student_Course" />
-        <AssociationConnector Association="RollCallSystemModel.FK_FaceTrainedStudent_StudentInformation" />
         <AssociationConnector Association="RollCallSystemModel.FK_Major_Faculty" />
         <AssociationConnector Association="RollCallSystemModel.FK_Teacher_Faculty" />
         <AssociationConnector Association="RollCallSystemModel.FK_FileData_File" />
+        <AssociationConnector Association="RollCallSystemModel.FK_RollCall_FileAttachment" />
         <AssociationConnector Association="RollCallSystemModel.FK_TrainingImage_File" />
-        <AssociationConnector Association="RollCallSystemModel.FK_StudentInformation_Khoa" />
-        <AssociationConnector Association="RollCallSystemModel.FK_TeacherInformation_Khoa" />
         <AssociationConnector Association="RollCallSystemModel.FK_MajorSpecialty_Major" />
         <AssociationConnector Association="RollCallSystemModel.FK_Student_Major" />
         <AssociationConnector Association="RollCallSystemModel.FK_Student_MajorSpecialty" />
-        <AssociationConnector Association="RollCallSystemModel.FK_ScheduleTeach_MonHoc" />
-        <AssociationConnector Association="RollCallSystemModel.FK_StudentMH_MonHoc" />
-        <AssociationConnector Association="RollCallSystemModel.FK_RollCallStudent_ScheduleTeach" />
-        <AssociationConnector Association="RollCallSystemModel.FK_RollCallStudent_StudentInformation" />
-        <AssociationConnector Association="RollCallSystemModel.FK_ScheduleTeach_Status" />
-        <AssociationConnector Association="RollCallSystemModel.FK_ScheduleTeach_TeacherInformation" />
+        <AssociationConnector Association="RollCallSystemModel.FK_RollCall_Student" />
         <AssociationConnector Association="RollCallSystemModel.FK_Student_User" />
-        <AssociationConnector Association="RollCallSystemModel.FK_StudentRollCall_Student" />
         <AssociationConnector Association="RollCallSystemModel.FK_Studying_Student" />
         <AssociationConnector Association="RollCallSystemModel.FK_TrainingImage_Student" />
-        <AssociationConnector Association="RollCallSystemModel.FK_StudentMH_StudentInformation" />
         <AssociationConnector Association="RollCallSystemModel.FK_Teacher_User" />
       </Diagram>
     </edmx:Diagrams>

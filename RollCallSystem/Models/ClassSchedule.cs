@@ -22,7 +22,7 @@ namespace RollCallSystem.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ClassSchedule()
         {
-            this.StudentRollCalls = new List<StudentRollCall>();
+            this.RollCalls = new List<RollCall>();
         }
     
     	[DataMember]
@@ -33,17 +33,11 @@ namespace RollCallSystem.Models
         public System.DateTime Datetime { get; set; }
     	[DataMember]
         public int Status { get; set; }
-    	[DataMember]
-        public int StartSession { get; set; }
-    	[DataMember]
-        public int Day { get; set; }
-    	[DataMember]
-        public int QuantityOfSession { get; set; }
     
     	[DataMember]
         public virtual Class Class { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     	[DataMember]
-        public virtual List<StudentRollCall> StudentRollCalls { get; set; }
+        public virtual List<RollCall> RollCalls { get; set; }
     }
 }
