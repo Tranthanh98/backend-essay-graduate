@@ -21,5 +21,10 @@ namespace RollCallSystem.Controllers.api
         {
             return RCSService.DeleteFile(fileId);
         }
+        [HttpGet]
+        public HttpResponseMessage GetClassReport(int classId)
+        {
+            return RCSService.GetClassReport(classId);
+        }
     }
 }

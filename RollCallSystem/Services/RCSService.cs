@@ -799,5 +799,14 @@ namespace RollCallSystem.Services
             r.Data = rl;
             return r;
         }
+        [HttpGet]
+        public HttpResponseMessage GetClassReport(int classId)
+        {
+            MemoryStream ms = new MemoryStream();
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(ms);
+            response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpg");
+            return response;
+        }
     }
 }
