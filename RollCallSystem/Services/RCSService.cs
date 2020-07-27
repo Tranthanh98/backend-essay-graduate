@@ -154,6 +154,7 @@ namespace RollCallSystem.Services
             }
             else
             {
+                model.Base64Image.base64ToImageGray()._EqualizeHist();
                 var f = DetectService.DetectFace(model.Base64Image.base64ToImageGray());
                 if (f.Count() <= 0)
                 {
