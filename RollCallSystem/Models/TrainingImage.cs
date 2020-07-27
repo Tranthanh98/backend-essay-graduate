@@ -12,25 +12,14 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class TrainingImage
     {
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public int StudentId { get; set; }
-    	[DataMember]
         public int FileId { get; set; }
-    	[DataMember]
         public System.DateTime CreatedDate { get; set; }
     
-    	[DataMember]
         public virtual FileAttachment FileAttachment { get; set; }
-    	[DataMember]
         public virtual Student Student { get; set; }
     }
 }

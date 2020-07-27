@@ -12,23 +12,13 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class Studying
     {
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public int StudentId { get; set; }
-    	[DataMember]
         public int ClassId { get; set; }
     
-    	[DataMember]
         public virtual Class Class { get; set; }
-    	[DataMember]
         public virtual Student Student { get; set; }
     }
 }

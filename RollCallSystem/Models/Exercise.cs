@@ -12,31 +12,17 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class Exercise
     {
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public string Name { get; set; }
-    	[DataMember]
         public string Description { get; set; }
-    	[DataMember]
         public System.DateTime Deadline { get; set; }
-    	[DataMember]
         public System.DateTime Start { get; set; }
-    	[DataMember]
         public System.DateTime PostDate { get; set; }
-    	[DataMember]
         public bool IsRequire { get; set; }
-    	[DataMember]
         public int ClassId { get; set; }
     
-    	[DataMember]
         public virtual Class Class { get; set; }
     }
 }

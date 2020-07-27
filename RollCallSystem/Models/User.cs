@@ -12,36 +12,24 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class User
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public User()
         {
-            this.Students = new List<Student>();
-            this.Teachers = new List<Teacher>();
+            this.Students = new HashSet<Student>();
+            this.Teachers = new HashSet<Teacher>();
         }
     
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public string Username { get; set; }
-    	[DataMember]
         public byte[] Password { get; set; }
-    	[DataMember]
         public int Role { get; set; }
-    	[DataMember]
         public bool IsActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<Student> Students { get; set; }
+        public virtual ICollection<Student> Students { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<Teacher> Teachers { get; set; }
+        public virtual ICollection<Teacher> Teachers { get; set; }
     }
 }

@@ -12,42 +12,27 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class FileAttachment
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public FileAttachment()
         {
-            this.RollCalls = new List<RollCall>();
-            this.TrainingImages = new List<TrainingImage>();
+            this.RollCalls = new HashSet<RollCall>();
+            this.TrainingImages = new HashSet<TrainingImage>();
         }
     
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public string Name { get; set; }
-    	[DataMember]
         public string Extension { get; set; }
-    	[DataMember]
         public int Width { get; set; }
-    	[DataMember]
         public int Height { get; set; }
-    	[DataMember]
         public int Type { get; set; }
-    	[DataMember]
         public System.DateTime CreateDate { get; set; }
     
-    	[DataMember]
         public virtual FileData FileData { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<RollCall> RollCalls { get; set; }
+        public virtual ICollection<RollCall> RollCalls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<TrainingImage> TrainingImages { get; set; }
+        public virtual ICollection<TrainingImage> TrainingImages { get; set; }
     }
 }

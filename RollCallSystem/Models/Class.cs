@@ -12,50 +12,32 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class Class
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Class()
         {
-            this.ClassSchedules = new List<ClassSchedule>();
-            this.Exercises = new List<Exercise>();
-            this.Studyings = new List<Studying>();
+            this.ClassSchedules = new HashSet<ClassSchedule>();
+            this.Exercises = new HashSet<Exercise>();
+            this.Studyings = new HashSet<Studying>();
         }
     
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public int SubjectId { get; set; }
-    	[DataMember]
         public int TeacherId { get; set; }
-    	[DataMember]
         public string Name { get; set; }
-    	[DataMember]
         public int Day { get; set; }
-    	[DataMember]
         public int StartSession { get; set; }
-    	[DataMember]
         public int QuantityOfSession { get; set; }
-    	[DataMember]
         public string Room { get; set; }
     
-    	[DataMember]
         public virtual Subject Subject { get; set; }
-    	[DataMember]
         public virtual Teacher Teacher { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<ClassSchedule> ClassSchedules { get; set; }
+        public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<Exercise> Exercises { get; set; }
+        public virtual ICollection<Exercise> Exercises { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<Studying> Studyings { get; set; }
+        public virtual ICollection<Studying> Studyings { get; set; }
     }
 }

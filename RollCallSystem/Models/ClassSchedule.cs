@@ -12,32 +12,21 @@ namespace RollCallSystem.Models
     using System;
     using System.Collections.Generic;
     
-     using System.Runtime.Serialization;
-     using Newtonsoft.Json;
-    
-     [DataContract(IsReference =true)]
-     [JsonObject(MemberSerialization.OptOut)]
     public partial class ClassSchedule
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ClassSchedule()
         {
-            this.RollCalls = new List<RollCall>();
+            this.RollCalls = new HashSet<RollCall>();
         }
     
-    	[DataMember]
         public int Id { get; set; }
-    	[DataMember]
         public int ClassId { get; set; }
-    	[DataMember]
         public System.DateTime Datetime { get; set; }
-    	[DataMember]
         public int Status { get; set; }
     
-    	[DataMember]
         public virtual Class Class { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-    	[DataMember]
-        public virtual List<RollCall> RollCalls { get; set; }
+        public virtual ICollection<RollCall> RollCalls { get; set; }
     }
 }
