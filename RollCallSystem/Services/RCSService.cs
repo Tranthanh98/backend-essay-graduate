@@ -154,7 +154,9 @@ namespace RollCallSystem.Services
             }
             else
             {
-                var f = DetectService.DetectFace(model.Base64Image.base64ToImageGray());
+                var imageGray = model.Base64Image.base64ToImageGray();
+                imageGray._EqualizeHist();
+                var f = DetectService.DetectFace(imageGray);
                 if (f.Count() <= 0)
                 {
                     ar.IsSuccess = false;
@@ -183,7 +185,7 @@ namespace RollCallSystem.Services
                 }
             }
             return ar;
-        }
+        } 
         private TrainingImage saveImageTraining(int studentId, string base64Image, Rectangle r)
         {
             var image = base64Image.base64ToImage();
@@ -229,6 +231,7 @@ namespace RollCallSystem.Services
             var image = model.Base64Image.base64ToImage();
             var bitmap = new Bitmap(image);
             var imageGray = model.Base64Image.base64ToImageGray();
+            imageGray._EqualizeHist();
             var rectangles = DetectService.DetectFace(imageGray);
             if (rectangles.Count() <= 0)
             {
@@ -290,12 +293,9 @@ namespace RollCallSystem.Services
             var trainModels = new List<TrainModel>();
             var ar = new ApiResult<List<Student>>();
             var datas = (from s in RCSContext.Students
-                         join t in RCSContext.TrainingImages on s.Id equals t.StudentId into t1
-                         from t in t1.DefaultIfEmpty()
-                         join f in RCSContext.FileAttachments on t.FileId equals f.Id into f1
-                         from f in f1.DefaultIfEmpty()
-                         join fd in RCSContext.FileDatas on f.Id equals fd.FileId into fd1
-                         from fd in fd1.DefaultIfEmpty()
+                         join t in RCSContext.TrainingImages on s.Id equals t.StudentId 
+                         join f in RCSContext.FileAttachments on t.FileId equals f.Id 
+                         join fd in RCSContext.FileDatas on f.Id equals fd.FileId 
                          select new
                          {
                              student = s,
@@ -303,15 +303,16 @@ namespace RollCallSystem.Services
                              file = f,
                              fileData = fd
                          }).ToList();
-            var students = datas.Select(d => d.student).Distinct().ToList();
             datas.ForEach(d =>
             {
                 if (d.fileData != null)
                 {
+                    var imageGray = d.fileData.Data.byteArrToImageGray();
+                    imageGray._EqualizeHist();
                     trainModels.Add(new TrainModel()
                     {
                         StudentId = d.student.Id,
-                        TrainingImageGray = d.fileData.Data.byteArrToImageGray()
+                        TrainingImageGray = imageGray
                     }); ;
                 }
             });
@@ -625,6 +626,7 @@ namespace RollCallSystem.Services
             var imageGray = model.Base64Image.base64ToImageGray();
             var image = model.Base64Image.base64ToImage();
             var bitmap = new Bitmap(image);
+            imageGray._EqualizeHist();
             var rectangles = DetectService.DetectFace(imageGray);
             if (rectangles.Count() == 0)
             {
@@ -656,7 +658,8 @@ namespace RollCallSystem.Services
             var r = new ApiResult<List<RollCall>>();
             var classId = RCSContext.ClassSchedules.Where(cs => cs.Id == model.ClassScheduleId).FirstOrDefault().ClassId;
             var studyings = RCSContext.Studyings.Where(st => st.ClassId == classId).ToList();
-            studyings = studyings.Where(st => model.RollCalls.Any(i => i.StudentId == st.StudentId)).ToList();
+            studyings = studyings.Where(st => model.RollCalls.Any(rc => rc.StudentId == st.StudentId)).ToList();
+
             if (studyings.Count() == 0)
             {
                 r.Messages.Add("Các học sinh không thuộc lớp học này");
@@ -708,7 +711,7 @@ namespace RollCallSystem.Services
                     }
                     rollCallsNew.Add(rollCall);
                 }
-                else if(!rc.IsActive)
+                else if (!rc.IsActive)
                 {
                     rc.IsActive = true;
                     rc.CreatedDate = DateTime.Now;
