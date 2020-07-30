@@ -27,14 +27,16 @@ namespace RollCallSystem.Services
             public List<Image<Gray,byte>> TrainingImageGrays { get; set; }
             public List<int> Labels { get; set; }
         }
-        private CascadeClassifier detectFace;
+        private CascadeClassifier detectFaceTrain;
+        private CascadeClassifier detectFaceRollCall;
         private static LBPHFaceRecognizer recognizer;
         private static readonly string haarLikePath = WebConfigurationManager.AppSettings["haarLikePath"];
         private Train train; 
         DetectService()
         {
-            detectFace = new CascadeClassifier(haarLikePath);
-            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 105);
+            detectFaceTrain = new CascadeClassifier(haarLikePath);
+            detectFaceRollCall = new CascadeClassifier(haarLikePath);
+            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 95);
             train = new Train();
         }
         private static readonly object padlock = new object();
@@ -53,9 +55,14 @@ namespace RollCallSystem.Services
                 }
             }
         }
-        public Rectangle[] DetectFace(Image<Gray, byte> grayImage)
+        public Rectangle[] DetectFaceTrain(Image<Gray, byte> grayImage)
         {
-            Rectangle[] faces = detectFace.DetectMultiScale(grayImage, 1.2, 8, new Size(20, 20), Size.Empty);
+            Rectangle[] faces = detectFaceTrain.DetectMultiScale(grayImage, 1.2, 10, new Size(20, 20), Size.Empty);
+            return faces;
+        }
+        public Rectangle[] DetectFaceRollCall(Image<Gray, byte> grayImage)
+        {
+            Rectangle[] faces = detectFaceRollCall.DetectMultiScale(grayImage, 1.2, 8, new Size(20, 20), Size.Empty);
             return faces;
         }
         public void TrainFace(List<TrainModel> trainModels)

@@ -10,9 +10,25 @@ namespace RollCallSystem.Controllers.api
 {
     public class ClassController : BaseApiController
     {
+        [HttpPost]
         public ApiResult<RollCallReponseModel> RollCall(RollCallModel model)
         {
             return RCSService.RollCall(model);
+        }
+        [HttpGet]
+        public ApiResult<ClassSchedule> OpenClass(int classScheduleId)
+        {
+            return RCSService.OpenClass(classScheduleId);
+        }
+        [HttpGet]
+        public ApiResult<ClassSchedule> CloseClass(int classScheduleId)
+        {
+            return RCSService.CloseClass(classScheduleId);
+        }
+        [HttpGet]
+        public ApiResult<ClassSchedule> GetClassScheduleFullData(int classScheduleId)
+        {
+            return RCSService.GetClassScheduleFullData(classScheduleId);
         }
     }
 }

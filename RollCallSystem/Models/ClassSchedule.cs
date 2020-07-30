@@ -33,6 +33,10 @@ namespace RollCallSystem.Models
         public System.DateTime Datetime { get; set; }
     	[DataMember]
         public int Status { get; set; }
+    	[DataMember]
+        public Nullable<System.DateTime> StartDatetime { get; set; }
+    	[DataMember]
+        public Nullable<System.DateTime> EndDatetime { get; set; }
     
     	[DataMember]
         public virtual Class Class { get; set; }

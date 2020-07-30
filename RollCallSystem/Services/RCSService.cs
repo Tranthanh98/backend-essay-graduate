@@ -158,7 +158,7 @@ namespace RollCallSystem.Services
                 var bitmap = new Bitmap(image);
                 var imageGray = model.Base64Image.base64ToImageGray();
                 imageGray._EqualizeHist();
-                var f = DetectService.DetectFace(imageGray);
+                var f = DetectService.DetectFaceTrain(imageGray);
                 if (f.Count() <= 0)
                 {
                     ar.IsSuccess = false;
@@ -260,7 +260,7 @@ namespace RollCallSystem.Services
             var bitmap = new Bitmap(image);
             var imageGray = model.Base64Image.base64ToImageGray();
             imageGray._EqualizeHist();
-            var rectangles = DetectService.DetectFace(imageGray);
+            var rectangles = DetectService.DetectFaceRollCall(imageGray);
             if (rectangles.Count() <= 0)
             {
                 ar.IsSuccess = false;
@@ -634,7 +634,7 @@ namespace RollCallSystem.Services
             var bitmap = new Bitmap(image);
             var bitmapResponse = new Bitmap(bitmap);
             imageGray._EqualizeHist();
-            var rectangles = DetectService.DetectFace(imageGray);
+            var rectangles = DetectService.DetectFaceRollCall(imageGray);
             if (rectangles.Count() == 0)
             {
                 r.Messages.Add("Không có sinh viên nào trong ảnh.");
@@ -797,7 +797,6 @@ namespace RollCallSystem.Services
             r.Data = rl;
             return r;
         }
-        [HttpGet]
         public HttpResponseMessage GetClassReport(int classId)
         {
             MemoryStream ms = new MemoryStream();
@@ -805,6 +804,103 @@ namespace RollCallSystem.Services
             response.Content = new StreamContent(ms);
             response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpg");
             return response;
+        }
+        public ApiResult<ClassSchedule> OpenClass(int classScheduleId)
+        {
+            ApiResult<ClassSchedule> r = new ApiResult<ClassSchedule>();
+            ClassSchedule cs = RCSContext.ClassSchedules.Where(i => i.Id == classScheduleId).FirstOrDefault();
+            if (cs == null)
+            {
+                r.Messages.Add("Lớp học không tồn tại.");
+                return r;
+            }
+            if (cs.Status == (int)EClassStatus.Opening)
+            {
+                r.Messages.Add("Lớp học đang được mở.");
+                return r;
+            }
+            if (cs.Status == (int)EClassStatus.Closed)
+            {
+                r.Messages.Add("Lớp học đã kết thúc.");
+                return r;
+            }
+            cs.Status = (int)EClassStatus.Opening;
+            cs.StartDatetime = DateTime.Now;
+            RCSContext.SaveChanges();
+            r.IsSuccess = true;
+            r.Data = cs;
+            r.Messages.Add("Mở lớp học thành công.");
+            return r;
+        }
+        public ApiResult<ClassSchedule> CloseClass(int classScheduleId)
+        {
+            ApiResult<ClassSchedule> r = new ApiResult<ClassSchedule>();
+            ClassSchedule cs = RCSContext.ClassSchedules.Where(i => i.Id == classScheduleId).FirstOrDefault();
+            if (cs == null)
+            {
+                r.Messages.Add("Lớp học không tồn tại.");
+                return r;
+            }
+            if (cs.Status == (int)EClassStatus.Schedule)
+            {
+                r.Messages.Add("Lớp học chưa mở.");
+                return r;
+            }
+            if (cs.Status == (int)EClassStatus.Closed)
+            {
+                r.Messages.Add("Lớp học đã kết thúc.");
+                return r;
+            }
+            cs.Status = (int)EClassStatus.Closed;
+            cs.EndDatetime = DateTime.Now;
+            RCSContext.SaveChanges();
+            r.IsSuccess = true;
+            r.Data = cs;
+            r.Messages.Add("Kết thúc lớp học thành công.");
+            return r;
+        }
+        public ApiResult<ClassSchedule> GetClassScheduleFullData(int classScheduleId)
+        {
+            ApiResult<ClassSchedule> r = new ApiResult<ClassSchedule>(); 
+            var temp = (from cs in RCSContext.ClassSchedules
+                                 where cs.Id == classScheduleId
+                                 join c in RCSContext.Classes on cs.ClassId equals c.Id into c1
+                                 from c in c1.DefaultIfEmpty()
+                                 join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
+                                 from s in s1.DefaultIfEmpty()
+                                 join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
+                                 from sj in sj1.DefaultIfEmpty()
+                                 join rc in RCSContext.RollCalls on cs.Id equals rc.ClassScheduleId into rc1
+                                 from rc in rc1.DefaultIfEmpty()
+                                 join src in RCSContext.Students on rc.StudentId equals src.Id into src1
+                                 from src in src1.DefaultIfEmpty()
+                                 join ss in RCSContext.Students on s.StudentId equals ss.Id into ss1
+                                 from ss in ss1.DefaultIfEmpty()
+                                 select new { c, s, sj, cs, rc, src, ss }
+                         ).ToList();
+            ClassSchedule classSchedule = temp.Select(t => t.cs).Distinct().FirstOrDefault();              
+            if (classSchedule == null)
+            {
+                r.IsSuccess = false;
+                r.Messages.Add("Không tìm thấy lớp học.");
+                return r;
+            }
+            classSchedule.Class.ClassSchedules = null;
+            classSchedule.Class.Subject.Classes = null;
+            classSchedule.Class.Studyings.ForEach(s =>
+            {
+                s.Class = null;
+                s.Student.Studyings = null;
+                s.Student.TrainingImages = null;
+            });
+            classSchedule.RollCalls.ForEach(rc =>
+            {
+                rc.ClassSchedule = null;
+                rc.Student.RollCalls = null;
+            });
+            r.Data = classSchedule;
+            r.IsSuccess = true;
+            return r;
         }
     }
 }
