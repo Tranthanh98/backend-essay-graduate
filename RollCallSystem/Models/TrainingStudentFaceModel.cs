@@ -5,9 +5,8 @@ using System.Web;
 
 namespace RollCallSystem.Models
 {
-    public class TrainingStudentFaceModel
+    public class TrainingStudentFaceModel : TrainingImage
     {
-        public int StudentId { get; set; }
         public string Base64Image { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace RollCallSystem.Controllers.api
             return await RCSService.GetAllStudent();
         }
         [HttpPost]
-        public async Task<ApiResult<TrainingImage>> TrainStudentFace(TrainingStudentFaceModel model)
+        public async Task<ApiResult<TrainingStudentFaceModel>> TrainStudentFace(TrainingStudentFaceModel model)
         {
             return await RCSService.TrainStudentFace(model);
         }

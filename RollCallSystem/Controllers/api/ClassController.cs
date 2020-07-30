@@ -10,7 +10,7 @@ namespace RollCallSystem.Controllers.api
 {
     public class ClassController : BaseApiController
     {
-        public ApiResult<List<RollCall>> RollCall(RollCallModel model)
+        public ApiResult<RollCallReponseModel> RollCall(RollCallModel model)
         {
             return RCSService.RollCall(model);
         }

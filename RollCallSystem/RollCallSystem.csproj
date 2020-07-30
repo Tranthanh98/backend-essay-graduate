@@ -299,6 +299,7 @@
     <Compile Include="Models\Class.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RollCallReponseModel.cs" />
     <Compile Include="Models\RollCall.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Cuda;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Text;
 using Microsoft.Ajax.Utilities;
@@ -44,7 +45,7 @@ namespace RollCallSystem.Services
             apiResult.IsSuccess = false;
             if (login == null)
             {
-                apiResult.Messages.Add("Login model invalid.");
+                apiResult.Messages.Add("Lỗi đăng nhập.");
                 return apiResult;
             }
             var user = await RCSContext.Users.Where(u => u.Username == login.Username).FirstOrDefaultAsync();
@@ -99,7 +100,7 @@ namespace RollCallSystem.Services
             }
             apiResult.Data = userInfo;
             apiResult.IsSuccess = true;
-            apiResult.Messages.Add("Login successfully");
+            apiResult.Messages.Add("Đăng nhập thành công.");
             return apiResult;
         }
         public async Task<ApiResult<List<User>>> CreateAccount(List<UserCreateModel> newUsers)
@@ -142,18 +143,19 @@ namespace RollCallSystem.Services
             apiResult.IsSuccess = true;
             return apiResult;
         }
-        public async Task<ApiResult<TrainingImage>> TrainStudentFace(TrainingStudentFaceModel model)
+        public async Task<ApiResult<TrainingStudentFaceModel>> TrainStudentFace(TrainingStudentFaceModel model)
         {
-            var ar = new ApiResult<TrainingImage>();
-            var trainingImage = new TrainingImage();
+            var ar = new ApiResult<TrainingStudentFaceModel>();
             var student = await RCSContext.Students.Where(s => s.Id == model.StudentId).FirstOrDefaultAsync();
             if (student == null)
             {
                 ar.IsSuccess = false;
-                ar.Messages.Add("Mã số sinh viên không tồn tại.");
+                ar.Messages.Add("Sinh viên không tồn tại.");
             }
             else
             {
+                var image = model.Base64Image.base64ToImage();
+                var bitmap = new Bitmap(image);
                 var imageGray = model.Base64Image.base64ToImageGray();
                 imageGray._EqualizeHist();
                 var f = DetectService.DetectFace(imageGray);
@@ -171,27 +173,54 @@ namespace RollCallSystem.Services
                         StudentId = trainImage.StudentId,
                         TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray()
                     });
+                    trainModels.Add(new TrainModel
+                    {
+                        StudentId = trainImage.StudentId,
+                        TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray().Flip(FlipType.Horizontal)
+                    });
                     DetectService.TrainFace(trainModels);
-                    trainImage.FileAttachment = null;
+                    trainImage.FileAttachment.TrainingImages = null;
+                    trainImage.FileAttachment.FileData.FileAttachment = null;
                     trainImage.Student = null;
-                    ar.Data = trainImage;
+                    var data = new TrainingStudentFaceModel()
+                    {
+                        Base64Image = Convert.ToBase64String(drawFaceAndNoteOnBitmap(bitmap, f[0], "",Color.Green).bitmapToByteArr()),
+                        StudentId = trainImage.StudentId,
+                        FileId = trainImage.FileId
+                    };
+                    ar.Data = data;
                     ar.IsSuccess = true;
                     ar.Messages.Add("Training thành công.");
                 }
                 else
                 {
                     ar.IsSuccess = false;
-                    ar.Messages.Add("Chỉ được có một khuôn mặt khi training.");
+                    ar.Messages.Add("Ảnh training chỉ được có một khuôn mặt.");
                 }
             }
             return ar;
-        } 
+        }
+
         private TrainingImage saveImageTraining(int studentId, string base64Image, Rectangle r)
         {
             var image = base64Image.base64ToImage();
             var bitmap = new Bitmap(image);
             bitmap = bitmap.cropAtRect(r);
             bitmap = new Bitmap(bitmap, new Size(100, 100));
+            var trainingImage = createTrainImage(studentId, bitmap);
+            RCSContext.TrainingImages.Add(trainingImage);
+            try
+            {
+                RCSContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                var a = 1;
+            }
+            return trainingImage;
+        }
+        public TrainingImage createTrainImage(int studentId, Bitmap bitmap)
+        {
             var fileData = new FileData()
             {
                 Data = bitmap.bitmapToByteArr()
@@ -199,8 +228,8 @@ namespace RollCallSystem.Services
             var file = new FileAttachment()
             {
                 CreateDate = DateTime.Now,
-                Height = image.Height,
-                Width = image.Width,
+                Height = bitmap.Height,
+                Width = bitmap.Width,
                 Extension = "jpg",
                 Type = (int)EFileType.ImageJPG,
                 Name = Guid.NewGuid().ToString(),
@@ -212,16 +241,15 @@ namespace RollCallSystem.Services
                 StudentId = studentId,
                 FileAttachment = file
             };
-            RCSContext.TrainingImages.Add(trainingImage);
-            try
-            {
-                RCSContext.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                var a = 1;
-            }
             return trainingImage;
+        }
+        private Bitmap drawFaceAndNoteOnBitmap(Bitmap bitmap, Rectangle rectangle, string text, Color color)
+        {
+            var i = new Image<Bgr, byte>(bitmap);
+            i.Draw(rectangle, new Bgr(color), 2); 
+            CvInvoke.PutText(i,text,new Point(rectangle.X, rectangle.Y - 10), Emgu.CV.CvEnum.FontFace.HersheyTriplex,0.7,new Bgr(color).MCvScalar,1);
+            var b = i.Bitmap;
+            return b;
         }
         public async Task<ApiResult<RecognizeModel>> RecognizeStudent(RecognizeModel model)
         {
@@ -266,28 +294,6 @@ namespace RollCallSystem.Services
             ar.IsSuccess = true;
             return ar;
         }
-        public void rollCall(int onClassId, List<int> studentIds)
-        {
-            //var studentOnClasses = new List<StudentOnClass>();
-            //studentIds.ForEach(s =>
-            //{
-            //    studentOnClasses.Add(new StudentOnClass
-            //    {
-            //        StudentId = s,
-            //        OnClassId = onClassId,
-            //        CreatedDate = DateTime.Now
-            //    });
-            //});
-            //RCSContext.StudentOnClasses.AddRange(studentOnClasses);
-            //try
-            //{
-            //    RCSContext.SaveChanges();
-            //}
-            //catch(Exception e)
-            //{
-
-            //}
-        }
         public List<TrainModel> getAllTrainModel()
         {
             var trainModels = new List<TrainModel>();
@@ -313,6 +319,11 @@ namespace RollCallSystem.Services
                     {
                         StudentId = d.student.Id,
                         TrainingImageGray = imageGray
+                    }); ;
+                    trainModels.Add(new TrainModel()
+                    {
+                        StudentId = d.student.Id,
+                        TrainingImageGray = imageGray.Flip(FlipType.Horizontal)
                     }); ;
                 }
             });
@@ -600,10 +611,14 @@ namespace RollCallSystem.Services
             r.IsSuccess = true;
             return r;
         }
-        public ApiResult<List<RollCall>> RollCall(RollCallModel model)
+        public ApiResult<RollCallReponseModel> RollCall(RollCallModel model)
         {
-            var r = new ApiResult<List<RollCall>>();
+            var r = new ApiResult<RollCallReponseModel>();
+            r.Data = new RollCallReponseModel();
+            r.Data.Base64Image = model.Base64Image;
+            var rollCallData = new ApiResult<List<RollCall>>();
             var classSchedule = RCSContext.ClassSchedules.Where(cs => cs.Id == model.ClassScheduleId).FirstOrDefault();
+            //check thông tin lớp học
             if (classSchedule == null)
             {
                 r.Messages.Add("Lớp học không tồn tại.");
@@ -619,24 +634,22 @@ namespace RollCallSystem.Services
                 r.Messages.Add("Lớp học đã kết thúc");
                 return r;
             }
-            if (model.Type == (int)ERollCallType.Manually)
-            {
-                return rollCall(model);
-            }
             var imageGray = model.Base64Image.base64ToImageGray();
             var image = model.Base64Image.base64ToImage();
             var bitmap = new Bitmap(image);
+            var bitmapResponse = new Bitmap(bitmap);
             imageGray._EqualizeHist();
             var rectangles = DetectService.DetectFace(imageGray);
             if (rectangles.Count() == 0)
             {
-                r.Messages.Add("Không phát hiện được sinh viên.");
+                r.Messages.Add("Không có sinh viên nào trong ảnh.");
                 return r;
             }
-            var rollCallModel = new RollCallModel
-            {
-                ClassScheduleId = model.ClassScheduleId
-            };
+            var classId = RCSContext.ClassSchedules.Where(cs => cs.Id == model.ClassScheduleId).FirstOrDefault().ClassId;
+            var studyings = RCSContext.Studyings.Where(st => st.ClassId == classId).ToList();
+            var newRollCalls = new List<RollCall>();
+            var oldRollCalls = new List<RollCall>();
+            //Detect khuôn mặt
             rectangles.ForEach(rec =>
             {
                 var face = bitmap.cropAtRect(rec);
@@ -644,93 +657,75 @@ namespace RollCallSystem.Services
                 var studentId = DetectService.RecognizeFace(faceGray);
                 if (studentId != -1)
                 {
-                    rollCallModel.RollCalls.Add(new RollCall
+                    if (studyings.Any(st => st.StudentId == studentId))
                     {
-                        StudentId = studentId,
-                        Image = face
-                    });
-                }
-            });
-            return rollCall(rollCallModel);
-        }
-        private ApiResult<List<RollCall>> rollCall(RollCallModel model)
-        {
-            var r = new ApiResult<List<RollCall>>();
-            var classId = RCSContext.ClassSchedules.Where(cs => cs.Id == model.ClassScheduleId).FirstOrDefault().ClassId;
-            var studyings = RCSContext.Studyings.Where(st => st.ClassId == classId).ToList();
-            studyings = studyings.Where(st => model.RollCalls.Any(rc => rc.StudentId == st.StudentId)).ToList();
-
-            if (studyings.Count() == 0)
-            {
-                r.Messages.Add("Các học sinh không thuộc lớp học này");
-                return r;
-            }
-            var rollCallsNew = new List<RollCall>();
-            var rollCallsOld = new List<RollCall>();
-            studyings.ForEach(st =>
-            {
-                var rc = RCSContext.RollCalls.Where(i => i.StudentId == st.StudentId && model.ClassScheduleId == i.ClassScheduleId).FirstOrDefault();
-                if (rc == null)
-                {
-                    var rollCall = new RollCall();
-                    if (model.Type == (int)ERollCallType.Manually)
-                    {
-                        rollCall = new RollCall
-                        {
-                            ClassScheduleId = model.ClassScheduleId,
-                            StudentId = st.StudentId,
-                            CreatedDate = DateTime.Now,
-                            Type = (int)ERollCallType.Manually,
-                            IsActive = true
-                        };
-                    }
-                    else
-                    {
-                        var image = model.RollCalls.Find(i => i.StudentId == st.StudentId).Image;
+                        bitmapResponse = drawFaceAndNoteOnBitmap(bitmapResponse, rec, studentId.ToString(), Color.Green);
+                        var rc = RCSContext.RollCalls.Where(i => i.StudentId == studentId && i.ClassScheduleId == model.ClassScheduleId).FirstOrDefault(); 
                         var fileData = new FileData
                         {
-                            Data = image.bitmapToByteArr(),
+                            Data = face.bitmapToByteArr(),
                         };
                         var fileAttachment = new FileAttachment
                         {
                             CreateDate = DateTime.Now,
-                            Height = image.Height,
-                            Width = image.Width,
+                            Height = face.Height,
+                            Width = face.Width,
                             Extension = "jpg",
                             Type = (int)EFileType.ImageJPG,
                             Name = Guid.NewGuid().ToString(),
                             FileData = fileData
-                        }; rollCall = new RollCall
-                        {
-                            ClassScheduleId = model.ClassScheduleId,
-                            StudentId = st.StudentId,
-                            CreatedDate = DateTime.Now,
-                            Type = (int)ERollCallType.Manually,
-                            IsActive = true
                         };
+                        if (rc == null)
+                        {
+                            var rollCall = new RollCall();
+                            rollCall = new RollCall
+                            {
+                                ClassScheduleId = model.ClassScheduleId,
+                                StudentId = studentId,
+                                CreatedDate = DateTime.Now,
+                                Type = (int)ERollCallType.Manually,
+                                IsActive = true
+                            };
+                            newRollCalls.Add(rollCall);
+                        }
+                        else
+                        {
+                            rc.IsActive = true;
+                            rc.CreatedDate = DateTime.Now;
+                            rc.FileAttachment = fileAttachment;
+                            oldRollCalls.Add(rc);
+                        }
                     }
-                    rollCallsNew.Add(rollCall);
                 }
-                else if (!rc.IsActive)
+                else
                 {
-                    rc.IsActive = true;
-                    rc.CreatedDate = DateTime.Now;
-                    rollCallsOld.Add(rc);
+                    bitmapResponse = drawFaceAndNoteOnBitmap(bitmapResponse, rec, "unknown", Color.Red);
                 }
             });
-            RCSContext.RollCalls.AddRange(rollCallsNew);
+            if (newRollCalls.Count == 0 && oldRollCalls.Count == 0)
+            {
+                r.Messages.Add("Các sinh viên không thuộc lớp này.");
+                r.Data.Base64Image = Convert.ToBase64String(bitmapResponse.bitmapToByteArr());
+                return r;
+            }
+            RCSContext.RollCalls.AddRange(newRollCalls);
             try
             {
                 RCSContext.SaveChanges();
-                rollCallsNew.AddRange(rollCallsOld);
-                rollCallsNew.ForEach(i =>
-                {
-                    i.ClassSchedule.RollCalls = null;
-                });
-                r.IsSuccess = true;
-                r.Data = rollCallsNew;
             }
-            catch (Exception e) { r.Messages.Add(e.Message); }
+            catch (Exception e) { r.Messages.Add(e.Message); return r; }
+            newRollCalls.AddRange(oldRollCalls);
+            newRollCalls.ForEach(i =>
+            {
+                i.ClassSchedule.RollCalls = null;
+                i.FileAttachment=null;
+                i.Student = null;
+                i.Image = null;
+            });
+            r.Messages.Add("Điểm danh thành công.");
+            r.IsSuccess = true;
+            r.Data.Base64Image = Convert.ToBase64String(bitmapResponse.bitmapToByteArr());
+            r.Data.RollCalls = newRollCalls;
             return r;
         }
         public ApiResult<RollCall> ChangeRollCall(int classScheduleId, int studentId)

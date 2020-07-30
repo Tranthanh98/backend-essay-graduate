@@ -53,7 +53,7 @@ namespace RollCallSystem.Services
         }
         public Rectangle[] DetectFace(Image<Gray, byte> grayImage)
         {
-            Rectangle[] faces = detectFace.DetectMultiScale(grayImage, 1.2, 10, new Size(20, 20), Size.Empty);
+            Rectangle[] faces = detectFace.DetectMultiScale(grayImage, 1.2, 8, new Size(20, 20), Size.Empty);
             return faces;
         }
         public void TrainFace(List<TrainModel> trainModels)
