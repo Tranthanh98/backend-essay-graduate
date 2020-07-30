@@ -5,3 +5,11 @@
 /RollCallSystem/Models
 
 .vs/RollCallSystem/v16/.suo
+
+RollCallSystem/Web.Config
+
+RollCallSystem/Models/DBEntities.tt
+
+RollCallSystem/Models/Class.cs
+
+RollCallSystem/Models/

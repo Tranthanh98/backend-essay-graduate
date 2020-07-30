@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 
 namespace RollCallSystem.Services
 {
@@ -28,10 +29,11 @@ namespace RollCallSystem.Services
         }
         private CascadeClassifier detectFace;
         private static LBPHFaceRecognizer recognizer;
+        private static readonly string haarLikePath = WebConfigurationManager.AppSettings["haarLikePath"];
         private Train train; 
         DetectService()
         {
-            detectFace = new CascadeClassifier("C:\\Workspace\\Luan van\\backend-essay-graduate\\RollCallSystem\\App_Data\\FaceRecognition\\haarcascade_frontalface_default.xml");
+            detectFace = new CascadeClassifier(haarLikePath);
             recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 105);
             train = new Train();
         }
@@ -67,6 +69,7 @@ namespace RollCallSystem.Services
         }
         public int RecognizeFace(Image<Gray,byte> grayImage)
         {
+
             FaceRecognizer.PredictionResult result = recognizer.Predict(grayImage.Resize(100, 100, Inter.Cubic));
             if (result.Label != -1)
             {
