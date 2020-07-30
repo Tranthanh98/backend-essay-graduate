@@ -32,7 +32,7 @@ namespace RollCallSystem.Services
         DetectService()
         {
             detectFace = new CascadeClassifier("C:\\Workspace\\Luan van\\backend-essay-graduate\\RollCallSystem\\App_Data\\FaceRecognition\\haarcascade_frontalface_default.xml");
-            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 95);
+            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 105);
             train = new Train();
         }
         private static readonly object padlock = new object();

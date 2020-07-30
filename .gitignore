@@ -1,5 +1,7 @@
 /RollCallSystem/bin
 /RollCallSystem/obj/Debug/
 /packages
+/RollCallSystem/Web.config
+/RollCallSystem/Models
 
 .vs/RollCallSystem/v16/.suo

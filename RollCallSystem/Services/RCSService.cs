@@ -176,7 +176,7 @@ namespace RollCallSystem.Services
                     trainModels.Add(new TrainModel
                     {
                         StudentId = trainImage.StudentId,
-                        TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray().Flip(FlipType.Horizontal)
+                        TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray(),
                     });
                     DetectService.TrainFace(trainModels);
                     trainImage.FileAttachment.TrainingImages = null;
@@ -319,12 +319,7 @@ namespace RollCallSystem.Services
                     {
                         StudentId = d.student.Id,
                         TrainingImageGray = imageGray
-                    }); ;
-                    trainModels.Add(new TrainModel()
-                    {
-                        StudentId = d.student.Id,
-                        TrainingImageGray = imageGray.Flip(FlipType.Horizontal)
-                    }); ;
+                    });
                 }
             });
             return trainModels;
@@ -655,12 +650,17 @@ namespace RollCallSystem.Services
                 var face = bitmap.cropAtRect(rec);
                 var faceGray = new Image<Gray, byte>(face);
                 var studentId = DetectService.RecognizeFace(faceGray);
+                if (studentId == -1)
+                {
+                    var faceGrayFlip = faceGray.Flip(FlipType.Horizontal);
+                    studentId = DetectService.RecognizeFace(faceGrayFlip);
+                }
                 if (studentId != -1)
                 {
                     if (studyings.Any(st => st.StudentId == studentId))
                     {
                         bitmapResponse = drawFaceAndNoteOnBitmap(bitmapResponse, rec, studentId.ToString(), Color.Green);
-                        var rc = RCSContext.RollCalls.Where(i => i.StudentId == studentId && i.ClassScheduleId == model.ClassScheduleId).FirstOrDefault(); 
+                        var rc = RCSContext.RollCalls.Where(i => i.StudentId == studentId && i.ClassScheduleId == model.ClassScheduleId).FirstOrDefault();
                         var fileData = new FileData
                         {
                             Data = face.bitmapToByteArr(),
@@ -718,7 +718,7 @@ namespace RollCallSystem.Services
             newRollCalls.ForEach(i =>
             {
                 i.ClassSchedule.RollCalls = null;
-                i.FileAttachment=null;
+                i.FileAttachment = null;
                 i.Student = null;
                 i.Image = null;
             });
