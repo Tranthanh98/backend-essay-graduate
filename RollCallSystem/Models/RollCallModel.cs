@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace RollCallSystem.Models
         public int Type { get; set; }
         public int ClassScheduleId { get; set; }
         public string Base64Image { get; set; }
+        public HttpPostedFileBase Image { get; set; }
         public List<RollCall> RollCalls { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace RollCallSystem.Services
                 }
             }
         }
-        public async Task<ApiResult<User>> Login(LoginModel login)
+        public ApiResult<User> Login(LoginModel login)
         {
             var apiResult = new ApiResult<User>();
             apiResult.IsSuccess = false;
@@ -48,7 +48,7 @@ namespace RollCallSystem.Services
                 apiResult.Messages.Add("Lỗi đăng nhập.");
                 return apiResult;
             }
-            var user = await RCSContext.Users.Where(u => u.Username == login.Username).FirstOrDefaultAsync();
+            var user = RCSContext.Users.Where(u => u.Username == login.Username).FirstOrDefault();
             if (user == null)
             {
                 apiResult.Messages.Add("Tài khoản không tồn tại.");
@@ -73,7 +73,7 @@ namespace RollCallSystem.Services
             };
             if (user.Role == (int)EUserRole.Student)
             {
-                userInfo.Student = await RCSContext.Students.Where(s => s.UserId == userInfo.Id).FirstOrDefaultAsync();
+                userInfo.Student = RCSContext.Students.Where(s => s.UserId == userInfo.Id).FirstOrDefault();
                 if (userInfo.Student != null)
                 {
                     userInfo.Student.User = null;
@@ -88,7 +88,7 @@ namespace RollCallSystem.Services
             }
             else
             {
-                userInfo.Teacher = await RCSContext.Teachers.Where(t => t.UserId == userInfo.Id).FirstOrDefaultAsync();
+                userInfo.Teacher = RCSContext.Teachers.Where(t => t.UserId == userInfo.Id).FirstOrDefault();
                 if (userInfo.Teacher != null)
                     userInfo.Teacher.User = null;
                 else
@@ -103,7 +103,7 @@ namespace RollCallSystem.Services
             apiResult.Messages.Add("Đăng nhập thành công.");
             return apiResult;
         }
-        public async Task<ApiResult<List<User>>> CreateAccount(List<UserCreateModel> newUsers)
+        public ApiResult<List<User>> CreateAccount(List<UserCreateModel> newUsers)
         {
             var apiResult = new ApiResult<List<User>>();
             var users = new List<User>();
@@ -120,7 +120,7 @@ namespace RollCallSystem.Services
             RCSContext.Users.AddRange(users);
             try
             {
-                await RCSContext.SaveChangesAsync();
+                RCSContext.SaveChanges();
                 apiResult.IsSuccess = true;
             }
             catch (Exception e)
@@ -129,11 +129,11 @@ namespace RollCallSystem.Services
             }
             return apiResult;
         }
-        public async Task<ApiResult<User>> GetCurrentUser()
+        public ApiResult<User> GetCurrentUser()
         {
             var apiResult = new ApiResult<User>();
             var id = getCurrentUserId();
-            var user = await RCSContext.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+            var user = RCSContext.Users.Where(u => u.Id == id).FirstOrDefault();
             apiResult.Data = new User()
             {
                 Id = user.Id,
@@ -143,10 +143,10 @@ namespace RollCallSystem.Services
             apiResult.IsSuccess = true;
             return apiResult;
         }
-        public async Task<ApiResult<TrainingStudentFaceModel>> TrainStudentFace(TrainingStudentFaceModel model)
+        public ApiResult<TrainFaceModel> TrainStudentFace(TrainFaceModel model)
         {
-            var ar = new ApiResult<TrainingStudentFaceModel>();
-            var student = await RCSContext.Students.Where(s => s.Id == model.StudentId).FirstOrDefaultAsync();
+            var ar = new ApiResult<TrainFaceModel>();
+            var student = RCSContext.Students.Where(s => s.Id == model.StudentId).FirstOrDefault();
             if (student == null)
             {
                 ar.IsSuccess = false;
@@ -158,15 +158,15 @@ namespace RollCallSystem.Services
                 var bitmap = new Bitmap(image);
                 var imageGray = model.Base64Image.base64ToImageGray();
                 imageGray._EqualizeHist();
-                var f = DetectService.DetectFaceTrain(imageGray);
-                if (f.Count() <= 0)
+                var rectangles = DetectService.DetectFaceTrain(imageGray);
+                if (rectangles.Count() <= 0)
                 {
                     ar.IsSuccess = false;
                     ar.Messages.Add("Không nhận diện được khuôn mặt, vui lòng chọn nơi có ánh sáng đầy đủ và điều chỉnh hướng nhìn.");
                 }
-                else if (f.Count() == 1)
+                else if (rectangles.Count() == 1)
                 {
-                    var trainImage = saveImageTraining(model.StudentId, model.Base64Image, f[0]);
+                    var trainImage = saveImageTraining(model.StudentId, model.Base64Image, rectangles[0]);
                     var trainModels = new List<TrainModel>();
                     trainModels.Add(new TrainModel
                     {
@@ -182,9 +182,9 @@ namespace RollCallSystem.Services
                     trainImage.FileAttachment.TrainingImages = null;
                     trainImage.FileAttachment.FileData.FileAttachment = null;
                     trainImage.Student = null;
-                    var data = new TrainingStudentFaceModel()
+                    var data = new TrainFaceModel()
                     {
-                        Base64Image = Convert.ToBase64String(drawFaceAndNoteOnBitmap(bitmap, f[0], "",Color.Green).bitmapToByteArr()),
+                        Base64Image = Convert.ToBase64String(drawFaceAndNoteOnBitmap(bitmap, rectangles[0], "", Color.Green).bitmapToByteArr()),
                         StudentId = trainImage.StudentId,
                         FileId = trainImage.FileId
                     };
@@ -194,6 +194,15 @@ namespace RollCallSystem.Services
                 }
                 else
                 {
+                    rectangles.ForEach(r =>
+                    {
+                        bitmap = drawFaceAndNoteOnBitmap(bitmap, r, "", Color.Red);
+                    });
+                    var data = new TrainFaceModel()
+                    {
+                        Base64Image = Convert.ToBase64String(bitmap.bitmapToByteArr())
+                    };
+                    ar.Data = data;
                     ar.IsSuccess = false;
                     ar.Messages.Add("Ảnh training chỉ được có một khuôn mặt.");
                 }
@@ -246,12 +255,12 @@ namespace RollCallSystem.Services
         private Bitmap drawFaceAndNoteOnBitmap(Bitmap bitmap, Rectangle rectangle, string text, Color color)
         {
             var i = new Image<Bgr, byte>(bitmap);
-            i.Draw(rectangle, new Bgr(color), 2); 
-            CvInvoke.PutText(i,text,new Point(rectangle.X, rectangle.Y - 10), Emgu.CV.CvEnum.FontFace.HersheyTriplex,0.7,new Bgr(color).MCvScalar,1);
+            i.Draw(rectangle, new Bgr(color), 2);
+            CvInvoke.PutText(i, text, new Point(rectangle.X, rectangle.Y - 10), Emgu.CV.CvEnum.FontFace.HersheyTriplex, 0.7, new Bgr(color).MCvScalar, 1);
             var b = i.Bitmap;
             return b;
         }
-        public async Task<ApiResult<RecognizeModel>> RecognizeStudent(RecognizeModel model)
+        public ApiResult<RecognizeModel> RecognizeStudent(RecognizeModel model)
         {
             var ar = new ApiResult<RecognizeModel>();
             var recognizeModel = new RecognizeModel();
@@ -280,7 +289,7 @@ namespace RollCallSystem.Services
                 ar.Messages.Add("Các sinh viên không thuộc lớp học này.");
                 return ar;
             }
-            var students = await RCSContext.Students.Where(s => studentIds.Any(st => st == s.Id)).ToListAsync();
+            var students = RCSContext.Students.Where(s => studentIds.Any(st => st == s.Id)).ToList();
             students.ForEach(s =>
             {
                 s.User = null;
@@ -299,9 +308,9 @@ namespace RollCallSystem.Services
             var trainModels = new List<TrainModel>();
             var ar = new ApiResult<List<Student>>();
             var datas = (from s in RCSContext.Students
-                         join t in RCSContext.TrainingImages on s.Id equals t.StudentId 
-                         join f in RCSContext.FileAttachments on t.FileId equals f.Id 
-                         join fd in RCSContext.FileDatas on f.Id equals fd.FileId 
+                         join t in RCSContext.TrainingImages on s.Id equals t.StudentId
+                         join f in RCSContext.FileAttachments on t.FileId equals f.Id
+                         join fd in RCSContext.FileDatas on f.Id equals fd.FileId
                          select new
                          {
                              student = s,
@@ -324,32 +333,32 @@ namespace RollCallSystem.Services
             });
             return trainModels;
         }
-        public async Task<ApiResult<List<Student>>> GetAllStudent()
+        public ApiResult<List<Student>> GetAllStudent()
         {
             var ar = new ApiResult<List<Student>>();
             var a = getAllTrainModel();
             ar.IsSuccess = true;
             return ar;
         }
-        public async Task<ApiResult<List<Studying>>> GetAllSubject(int studentId)
+        public ApiResult<List<Studying>> GetAllSubject(int studentId)
         {
             var ar = new ApiResult<List<Studying>>();
             try
             {
                 var studyings = new List<Studying>();
-                var data = await (from s in RCSContext.Studyings
-                                  where s.StudentId == studentId
-                                  join c in RCSContext.Classes on s.ClassId equals c.Id into c1
-                                  from c in c1.DefaultIfEmpty()
-                                  join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
-                                  from sj in sj1.DefaultIfEmpty()
-                                  join t in RCSContext.Teachers on c.TeacherId equals t.Id into t1
-                                  from t in t1.DefaultIfEmpty()
-                                  join cs in RCSContext.ClassSchedules on c.Id equals cs.ClassId into cs1
-                                  from cs in cs1.DefaultIfEmpty()
-                                  join rc in RCSContext.RollCalls on new { cdId = cs.Id, stId = studentId } equals new { cdId = rc.ClassScheduleId, stId = rc.StudentId } into rc1
-                                  from rc in rc1.DefaultIfEmpty()
-                                  select new { s, c, sj, cs, rc, t }).ToListAsync();
+                var data = (from s in RCSContext.Studyings
+                            where s.StudentId == studentId
+                            join c in RCSContext.Classes on s.ClassId equals c.Id into c1
+                            from c in c1.DefaultIfEmpty()
+                            join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
+                            from sj in sj1.DefaultIfEmpty()
+                            join t in RCSContext.Teachers on c.TeacherId equals t.Id into t1
+                            from t in t1.DefaultIfEmpty()
+                            join cs in RCSContext.ClassSchedules on c.Id equals cs.ClassId into cs1
+                            from cs in cs1.DefaultIfEmpty()
+                            join rc in RCSContext.RollCalls on new { cdId = cs.Id, stId = studentId } equals new { cdId = rc.ClassScheduleId, stId = rc.StudentId } into rc1
+                            from rc in rc1.DefaultIfEmpty()
+                            select new { s, c, sj, cs, rc, t }).ToList();
                 studyings = data.Select(d => d.s).Distinct().ToList();
                 studyings.ForEach(s =>
                 {
@@ -374,22 +383,22 @@ namespace RollCallSystem.Services
             }
             return ar;
         }
-        public async Task<ApiResult<Student>> GetStudentInfo(int studentId)
+        public ApiResult<Student> GetStudentInfo(int studentId)
         {
             var ar = new ApiResult<Student>();
-            var student1 = await (from s in RCSContext.Students
-                                  where s.Id == studentId
-                                  join c in RCSContext.Courses on s.CourseId equals c.Id into c1
-                                  from c in c1.DefaultIfEmpty()
-                                  join m in RCSContext.Majors on s.MajorId equals m.Id into m1
-                                  from m in m1.DefaultIfEmpty()
-                                  join ms in RCSContext.MajorSpecialties on s.MajorSpecialtyId equals ms.Id into ms1
-                                  from ms in ms1.DefaultIfEmpty()
-                                  join f in RCSContext.Faculties on m.FacultyId equals f.Id into f1
-                                  from f in f1.DefaultIfEmpty()
-                                  join t in RCSContext.TrainingImages on s.Id equals t.StudentId into t1
-                                  select new { s, c, m, ms, f, t1 }
-                       ).FirstOrDefaultAsync();
+            var student1 = (from s in RCSContext.Students
+                            where s.Id == studentId
+                            join c in RCSContext.Courses on s.CourseId equals c.Id into c1
+                            from c in c1.DefaultIfEmpty()
+                            join m in RCSContext.Majors on s.MajorId equals m.Id into m1
+                            from m in m1.DefaultIfEmpty()
+                            join ms in RCSContext.MajorSpecialties on s.MajorSpecialtyId equals ms.Id into ms1
+                            from ms in ms1.DefaultIfEmpty()
+                            join f in RCSContext.Faculties on m.FacultyId equals f.Id into f1
+                            from f in f1.DefaultIfEmpty()
+                            join t in RCSContext.TrainingImages on s.Id equals t.StudentId into t1
+                            select new { s, c, m, ms, f, t1 }
+                       ).FirstOrDefault();
             var student = student1.s;
             if (student == null)
             {
@@ -409,11 +418,11 @@ namespace RollCallSystem.Services
             }
             return ar;
         }
-        public async Task<ApiResult<List<TrainingImage>>> GetStudentTrainImages(int studentId)
+        public ApiResult<List<TrainingImage>> GetStudentTrainImages(int studentId)
         {
             var ar = new ApiResult<List<TrainingImage>>();
             var trainImages = new List<TrainingImage>();
-            trainImages = await RCSContext.TrainingImages.Where(t => t.StudentId == studentId).ToListAsync();
+            trainImages = RCSContext.TrainingImages.Where(t => t.StudentId == studentId).ToList();
             trainImages.ForEach(t =>
             {
                 t.Student = null;
@@ -574,7 +583,8 @@ namespace RollCallSystem.Services
                 RCSContext.SaveChanges();
             }
             catch (Exception e) { r.Messages.Add(e.Message); return r; }
-            var temp = (from cs in RCSContext.ClassSchedules where cs.Id == classSchedule.Id
+            var temp = (from cs in RCSContext.ClassSchedules
+                        where cs.Id == classSchedule.Id
                         join c in RCSContext.Classes on cs.ClassId equals c.Id into c1
                         from c in c1.DefaultIfEmpty()
                         join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
@@ -683,7 +693,7 @@ namespace RollCallSystem.Services
                                 ClassScheduleId = model.ClassScheduleId,
                                 StudentId = studentId,
                                 CreatedDate = DateTime.Now,
-                                Type = (int)ERollCallType.Manually,
+                                Type = (int)ERollCallType.Auto,
                                 IsActive = true
                             };
                             newRollCalls.Add(rollCall);
@@ -737,7 +747,7 @@ namespace RollCallSystem.Services
                 r.Messages.Add("Không tìm thấy lớp học.");
                 return r;
             }
-            if (classSchedule.Status==(int)EClassStatus.Schedule)
+            if (classSchedule.Status == (int)EClassStatus.Schedule)
             {
                 r.Messages.Add("Lớp chưa mở, bạn không thể điểm danh vào lúc này.");
                 return r;
@@ -784,10 +794,11 @@ namespace RollCallSystem.Services
                 r.Messages.Add(e.Message);
                 return r;
             }
-            var rl = (from rc in RCSContext.RollCalls where (rc.ClassScheduleId == classScheduleId && rc.StudentId == studentId)                      
+            var rl = (from rc in RCSContext.RollCalls
+                      where (rc.ClassScheduleId == classScheduleId && rc.StudentId == studentId)
                       join st in RCSContext.Students on rc.StudentId equals st.Id into st1
-                      from st in st1.DefaultIfEmpty() 
-                      select new { rc,st }).FirstOrDefault().rc;
+                      from st in st1.DefaultIfEmpty()
+                      select new { rc, st }).FirstOrDefault().rc;
 
             rl.Student.RollCalls = null;
             rl.Student.Studyings = null;
@@ -861,24 +872,24 @@ namespace RollCallSystem.Services
         }
         public ApiResult<ClassSchedule> GetClassScheduleFullData(int classScheduleId)
         {
-            ApiResult<ClassSchedule> r = new ApiResult<ClassSchedule>(); 
+            ApiResult<ClassSchedule> r = new ApiResult<ClassSchedule>();
             var temp = (from cs in RCSContext.ClassSchedules
-                                 where cs.Id == classScheduleId
-                                 join c in RCSContext.Classes on cs.ClassId equals c.Id into c1
-                                 from c in c1.DefaultIfEmpty()
-                                 join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
-                                 from s in s1.DefaultIfEmpty()
-                                 join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
-                                 from sj in sj1.DefaultIfEmpty()
-                                 join rc in RCSContext.RollCalls on cs.Id equals rc.ClassScheduleId into rc1
-                                 from rc in rc1.DefaultIfEmpty()
-                                 join src in RCSContext.Students on rc.StudentId equals src.Id into src1
-                                 from src in src1.DefaultIfEmpty()
-                                 join ss in RCSContext.Students on s.StudentId equals ss.Id into ss1
-                                 from ss in ss1.DefaultIfEmpty()
-                                 select new { c, s, sj, cs, rc, src, ss }
+                        where cs.Id == classScheduleId
+                        join c in RCSContext.Classes on cs.ClassId equals c.Id into c1
+                        from c in c1.DefaultIfEmpty()
+                        join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
+                        from s in s1.DefaultIfEmpty()
+                        join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
+                        from sj in sj1.DefaultIfEmpty()
+                        join rc in RCSContext.RollCalls on cs.Id equals rc.ClassScheduleId into rc1
+                        from rc in rc1.DefaultIfEmpty()
+                        join src in RCSContext.Students on rc.StudentId equals src.Id into src1
+                        from src in src1.DefaultIfEmpty()
+                        join ss in RCSContext.Students on s.StudentId equals ss.Id into ss1
+                        from ss in ss1.DefaultIfEmpty()
+                        select new { c, s, sj, cs, rc, src, ss }
                          ).ToList();
-            ClassSchedule classSchedule = temp.Select(t => t.cs).Distinct().FirstOrDefault();              
+            ClassSchedule classSchedule = temp.Select(t => t.cs).Distinct().FirstOrDefault();
             if (classSchedule == null)
             {
                 r.IsSuccess = false;

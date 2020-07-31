@@ -22,9 +22,9 @@ namespace RollCallSystem.Controllers.api
             }
         }
         [HttpPost]
-        public async Task<ApiResult<User>> Login(LoginModel login)
+        public ApiResult<User> Login(LoginModel login)
         {
-            var apiResult = await RCSService.Login(login);
+            var apiResult = RCSService.Login(login);
             if (apiResult.IsSuccess)
             {
                 var claims = new List<Claim>();
@@ -41,7 +41,7 @@ namespace RollCallSystem.Controllers.api
             return apiResult;
         }
         [HttpGet]
-        public async Task<ApiResult<User>> Logout()
+        public ApiResult<User> Logout()
         {
             var apiResult = new ApiResult<User>();
             AuthenticationManager.SignOut();
@@ -49,12 +49,12 @@ namespace RollCallSystem.Controllers.api
             return apiResult;
         }
         [HttpGet]
-        public async Task<ApiResult<User>> CheckLogin()
+        public ApiResult<User> CheckLogin()
         {
             var apiResult = new ApiResult<User>();
-            if(ClaimsPrincipal.Current.Identity.IsAuthenticated == true)
+            if (ClaimsPrincipal.Current.Identity.IsAuthenticated == true)
             {
-                apiResult = await RCSService.GetCurrentUser();
+                apiResult = RCSService.GetCurrentUser();
             }
             else
             {
@@ -63,14 +63,14 @@ namespace RollCallSystem.Controllers.api
             return apiResult;
         }
         [HttpGet]
-        public async Task<ApiResult<User>> GetCurrentUser()
+        public ApiResult<User> GetCurrentUser()
         {
-            return await RCSService.GetCurrentUser();
+            return RCSService.GetCurrentUser();
         }
         [HttpPost]
-        public async Task<ApiResult<List<User>>> CreateAccount(List<UserCreateModel> newUsers)
+        public ApiResult<List<User>> CreateAccount(List<UserCreateModel> newUsers)
         {
-            return await RCSService.CreateAccount(newUsers);
+            return RCSService.CreateAccount(newUsers);
         }
-    } 
+    }
 }
