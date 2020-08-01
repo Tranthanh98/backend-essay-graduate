@@ -775,6 +775,7 @@ namespace RollCallSystem.Services
             {
                 rollCall.IsActive = !rollCall.IsActive;
                 rollCall.CreatedDate = DateTime.Now;
+                rollCall.Type = (int)ERollCallType.Manually;
             }
             try
             {
