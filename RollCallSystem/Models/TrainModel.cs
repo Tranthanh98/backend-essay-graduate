@@ -10,7 +10,19 @@ namespace RollCallSystem.Models
 {
     public class TrainModel
     {
-        public Image<Gray,byte> TrainingImageGray { get; set; }
+        public TrainModel()
+        {
+        }
+
+        public TrainModel(int studentId, int imageId, Image<Gray, byte> imageGray)
+        {
+            StudentId = studentId;
+            ImageId = imageId;
+            ImageGray = imageGray;
+        }
+
         public int StudentId { get; set; }
+        public int ImageId { get; set; }
+        public Image<Gray,byte> ImageGray { get; set; }
     }
 }

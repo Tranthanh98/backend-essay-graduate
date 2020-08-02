@@ -34,7 +34,7 @@ namespace RollCallSystem.Services
                 var trainModels = getAllTrainModel();
                 if (trainModels.Count > 0)
                 {
-                    DetectService.TrainFace(trainModels);
+                    DetectService.AddTrainModels(trainModels);
                     isFirstTrained = true;
                 }
             }
@@ -42,7 +42,6 @@ namespace RollCallSystem.Services
         public ApiResult<User> Login(LoginModel login)
         {
             var apiResult = new ApiResult<User>();
-            apiResult.IsSuccess = false;
             if (login == null)
             {
                 apiResult.Messages.Add("Lỗi đăng nhập.");
@@ -171,14 +170,11 @@ namespace RollCallSystem.Services
                     trainModels.Add(new TrainModel
                     {
                         StudentId = trainImage.StudentId,
-                        TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray()
+                        ImageId = trainImage.FileId,
+                        ImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray(),
+                        
                     });
-                    trainModels.Add(new TrainModel
-                    {
-                        StudentId = trainImage.StudentId,
-                        TrainingImageGray = trainImage.FileAttachment.FileData.Data.byteArrToImageGray(),
-                    });
-                    DetectService.TrainFace(trainModels);
+                    DetectService.AddTrainModels(trainModels);
                     trainImage.FileAttachment.TrainingImages = null;
                     trainImage.FileAttachment.FileData.FileAttachment = null;
                     trainImage.Student = null;
@@ -260,49 +256,6 @@ namespace RollCallSystem.Services
             var b = i.Bitmap;
             return b;
         }
-        public ApiResult<RecognizeModel> RecognizeStudent(RecognizeModel model)
-        {
-            var ar = new ApiResult<RecognizeModel>();
-            var recognizeModel = new RecognizeModel();
-            var studentIds = new List<int>();
-            var image = model.Base64Image.base64ToImage();
-            var bitmap = new Bitmap(image);
-            var imageGray = model.Base64Image.base64ToImageGray();
-            imageGray._EqualizeHist();
-            var rectangles = DetectService.DetectFaceRollCall(imageGray);
-            if (rectangles.Count() <= 0)
-            {
-                ar.IsSuccess = false;
-                ar.Messages.Add("Không có khuôn mặt nào trong ảnh được phát hiện.");
-                return ar;
-            }
-            rectangles.ForEach(r =>
-            {
-                var b = bitmap.cropAtRect(r);
-                imageGray = new Image<Gray, byte>(b);
-                var studentId = DetectService.RecognizeFace(imageGray);
-                if (studentId != -1) studentIds.Add(studentId);
-            });
-            if (studentIds.Count <= 0)
-            {
-                ar.IsSuccess = false;
-                ar.Messages.Add("Các sinh viên không thuộc lớp học này.");
-                return ar;
-            }
-            var students = RCSContext.Students.Where(s => studentIds.Any(st => st == s.Id)).ToList();
-            students.ForEach(s =>
-            {
-                s.User = null;
-                s.TrainingImages = null;
-                s.Studyings = null;
-                s.Course = null;
-            });
-            recognizeModel = model;
-            recognizeModel.Students = students;
-            ar.Data = recognizeModel;
-            ar.IsSuccess = true;
-            return ar;
-        }
         public List<TrainModel> getAllTrainModel()
         {
             var trainModels = new List<TrainModel>();
@@ -327,7 +280,8 @@ namespace RollCallSystem.Services
                     trainModels.Add(new TrainModel()
                     {
                         StudentId = d.student.Id,
-                        TrainingImageGray = imageGray
+                        ImageId = d.fileData.FileId,
+                        ImageGray = imageGray
                     });
                 }
             });
@@ -462,15 +416,14 @@ namespace RollCallSystem.Services
                 ar.Data = fileId;
                 ar.IsSuccess = false;
                 ar.Messages.Add("Không tìm thấy file.");
+                return ar;
             }
-            else
-            {
-                ar.Data = fileId;
-                RCSContext.TrainingImages.Remove(trainingImage);
-                RCSContext.SaveChanges();
-                ar.IsSuccess = true;
-                ar.Messages.Add("Xóa file thành công.");
-            }
+            ar.Data = fileId;
+            RCSContext.TrainingImages.Remove(trainingImage);
+            RCSContext.SaveChanges();
+            DetectService.RemoveTrainsByImageId(trainingImage.FileId);
+            ar.IsSuccess = true;
+            ar.Messages.Add("Xóa file thành công.");
             return ar;
         }
         /// Teacher

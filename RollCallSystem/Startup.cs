@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(RollCallSystem.Startup))]
@@ -10,5 +11,9 @@ namespace RollCallSystem
         {
             ConfigureAuth(app);
         }
+        public void ConfigureServices(IServiceCollection services)
+        {
+        }
+
     }
 }
