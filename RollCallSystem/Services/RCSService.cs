@@ -162,6 +162,11 @@ namespace RollCallSystem.Services
                 {
                     ar.IsSuccess = false;
                     ar.Messages.Add("Không nhận diện được khuôn mặt, vui lòng chọn nơi có ánh sáng đầy đủ và điều chỉnh hướng nhìn.");
+                    var data = new TrainFaceModel()
+                    {
+                        Base64Image = Convert.ToBase64String(bitmap.bitmapToByteArr())
+                    };
+                    ar.Data = data;
                 }
                 else if (rectangles.Count() == 1)
                 {

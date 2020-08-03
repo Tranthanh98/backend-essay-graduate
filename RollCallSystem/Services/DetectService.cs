@@ -25,7 +25,7 @@ namespace RollCallSystem.Services
         {
             detectFaceTrain = new CascadeClassifier(haarLikePath);
             detectFaceRollCall = new CascadeClassifier(haarLikePath);
-            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 95);
+            recognizer = new LBPHFaceRecognizer(1, 8, 8, 8, 90);
             trainData = new List<TrainModel>();
         }
         private static readonly object padlock = new object();
