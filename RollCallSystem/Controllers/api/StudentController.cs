@@ -51,11 +51,14 @@ namespace RollCallSystem.Controllers.api
             }
             return r;
         }
+<<<<<<< Updated upstream
         //[HttpPost]
         //public ApiResult<RecognizeModel> RecognizeStudent(RecognizeModel model)
         //{
         //    return RCSService.RecognizeStudent(model);
         //}
+=======
+>>>>>>> Stashed changes
         [HttpGet]
         public ApiResult<List<Studying>> GetAllSubject(int studentId)
         {

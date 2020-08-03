@@ -435,7 +435,6 @@ namespace RollCallSystem.Services
         public ApiResult<Teacher> GetTeacherInfo(int teacherId)
         {
             var r = new ApiResult<Teacher>();
-            var today = DateTime.Now;
             var data = (from t in RCSContext.Teachers
                         where t.Id == teacherId
                         join f in RCSContext.Faculties on t.FacultyId equals f.Id into f1
@@ -447,20 +446,26 @@ namespace RollCallSystem.Services
             r.IsSuccess = true;
             return r;
         }
-        public ApiResult<List<Class>> GetAllClassByTeacherId(int teacherId)
+        public ApiResult<List<Class>> GetAllClassByTeacherId(ClassSeachModel seachModel)
         {
             var r = new ApiResult<List<Class>>();
-            var today = DateTime.Now;
-            var temp = (from c in RCSContext.Classes
-                        where c.TeacherId == teacherId
-                        join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
-                        from s in s1.DefaultIfEmpty()
-                        join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
-                        from sj in sj1.DefaultIfEmpty()
-                        join cs in RCSContext.ClassSchedules on c.Id equals cs.ClassId into cs1
-                        from cs in cs1.DefaultIfEmpty()
-                        select new { c, cs, sj, s }).ToList();
-            var classes = temp.Select(t => t.c).Distinct().ToList();
+            var classes = new List<Class>();
+            var q = (from c in RCSContext.Classes
+                     where c.TeacherId == seachModel.TeacherId
+                     join s in RCSContext.Studyings on c.Id equals s.ClassId into s1
+                     from s in s1.DefaultIfEmpty()
+                     join sj in RCSContext.Subjects on c.SubjectId equals sj.Id into sj1
+                     from sj in sj1.DefaultIfEmpty()
+                     join cs in RCSContext.ClassSchedules on c.Id equals cs.ClassId into cs1
+                     from cs in cs1.DefaultIfEmpty()
+                     select new { c, cs, sj, s }).AsQueryable();
+            if (seachModel.Date != null)
+            {
+                DateTime startDate = seachModel.Date.Value.AddHours(7).Date;
+                DateTime endDate = seachModel.Date.Value.AddHours(7).Date.AddDays(1).AddTicks(-1);
+                q.Where(t => t.cs.Datetime >= startDate && t.cs.Datetime <= endDate).AsQueryable();
+            }
+            classes = q.ToList().Select(t => t.c).Distinct().ToList();
             classes.ForEach(c =>
             {
                 c.Studyings.ForEach(s =>

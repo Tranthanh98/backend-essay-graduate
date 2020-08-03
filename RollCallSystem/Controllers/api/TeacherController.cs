@@ -10,10 +10,10 @@ namespace RollCallSystem.Controllers.api
 {
     public class TeacherController : BaseApiController
     {
-        [HttpGet]
-        public ApiResult<List<Class>> GetAllClassByTeacherId(int teacherId)
+        [HttpPost]
+        public ApiResult<List<Class>> GetAllClassByTeacherId(ClassSeachModel seachModel)
         {
-            return RCSService.GetAllClassByTeacherId(teacherId);
+            return RCSService.GetAllClassByTeacherId(seachModel);
         }
         [HttpGet]
         public ApiResult<Teacher> GetTeacherInfo(int teacherId)
