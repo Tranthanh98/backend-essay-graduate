@@ -21,3 +21,23 @@ RollCallSystem/libman.json
 RollCallSystem/packages.config
 
 RollCallSystem/Properties/PublishProfiles/IISProfile.pubxml
+
+RollCallSystem/Properties/PublishProfiles/IISProfile.pubxml.user
+
+RollCallSystem/Properties/serviceDependencies.json
+
+RollCallSystem/Properties/serviceDependencies.local.json
+
+RollCallSystem/Properties/serviceDependencies.local.json.user
+
+RollCallSystem/RollCallSystem.csproj
+
+RollCallSystem/RollCallSystem.csproj.user
+
+RollCallSystem/RollCallSystem.deploy-readme.txt
+
+RollCallSystem/RollCallSystem.deploy.cmd
+
+RollCallSystem/RollCallSystem.SetParameters.xml
+
+RollCallSystem/RollCallSystem.SourceManifest.xml
