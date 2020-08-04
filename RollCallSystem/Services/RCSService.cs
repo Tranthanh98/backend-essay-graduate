@@ -461,9 +461,9 @@ namespace RollCallSystem.Services
                      select new { c, cs, sj, s }).AsQueryable();
             if (seachModel.Date != null)
             {
-                DateTime startDate = seachModel.Date.Value.AddHours(7).Date;
-                DateTime endDate = seachModel.Date.Value.AddHours(7).Date.AddDays(1).AddTicks(-1);
-                q.Where(t => t.cs.Datetime >= startDate && t.cs.Datetime <= endDate).AsQueryable();
+                DateTime startDate = seachModel.Date.Value.Date;
+                DateTime endDate = seachModel.Date.Value.Date.AddDays(1).AddTicks(-1);
+                q = q.Where(t => t.cs.Datetime >= startDate && t.cs.Datetime <= endDate).AsQueryable();
             }
             classes = q.ToList().Select(t => t.c).Distinct().ToList();
             classes.ForEach(c =>
